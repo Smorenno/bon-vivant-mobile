@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Bon Vivant",
+    "slug": "bon-vivant",
+    "scheme": "bonvivant",
+    "version": "1.0.0",
+    "sdkVersion": "51.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bonvivant.app"
+    },
+    "android": {
+      "package": "com.bonvivant.app"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
