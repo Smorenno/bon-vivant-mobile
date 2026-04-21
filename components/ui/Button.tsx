@@ -12,10 +12,11 @@ import {
 interface ButtonProps {
   label: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'light';
   loading?: boolean;
   disabled?: boolean;
   icon?: React.ReactNode;
+  iconRight?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -26,6 +27,7 @@ export default function Button({
   loading = false,
   disabled = false,
   icon,
+  iconRight,
   style,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
@@ -37,6 +39,7 @@ export default function Button({
         variant === 'primary' && styles.primary,
         variant === 'secondary' && styles.secondary,
         variant === 'ghost' && styles.ghost,
+        variant === 'light' && styles.light,
         isDisabled && styles.disabled,
         style,
       ]}
@@ -51,17 +54,19 @@ export default function Button({
         />
       ) : (
         <View style={styles.content}>
-          {icon != null && <View style={styles.iconWrapper}>{icon}</View>}
+          {icon != null && <View style={styles.iconLeft}>{icon}</View>}
           <Text
             style={[
               styles.label,
               variant === 'primary' && styles.labelPrimary,
               variant === 'secondary' && styles.labelSecondary,
               variant === 'ghost' && styles.labelGhost,
+              variant === 'light' && styles.labelLight,
             ]}
           >
             {label}
           </Text>
+          {iconRight != null && <View style={styles.iconRight}>{iconRight}</View>}
         </View>
       )}
     </TouchableOpacity>
@@ -87,6 +92,9 @@ const styles = StyleSheet.create({
   ghost: {
     backgroundColor: 'transparent',
   },
+  light: {
+    backgroundColor: '#FFFFFF',
+  },
   disabled: {
     opacity: 0.6,
   },
@@ -95,8 +103,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconWrapper: {
+  iconLeft: {
     marginRight: 10,
+  },
+  iconRight: {
+    marginLeft: 10,
   },
   label: {
     fontSize: 16,
@@ -110,5 +121,8 @@ const styles = StyleSheet.create({
   },
   labelGhost: {
     color: '#6B7280',
+  },
+  labelLight: {
+    color: '#111827',
   },
 });

@@ -11,5 +11,7 @@ export const Colors = {
   error: '#DC2626',
   success: '#059669',
   teal: '#1D9E75',
+  tealLight: '#E1F5EE',
+  tealDark: '#0F6E56',
   purple: '#7F77DD',
 } as const;

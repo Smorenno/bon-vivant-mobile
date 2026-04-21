@@ -1,21 +1,28 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { useRouter } from 'expo-router';
+import { storage } from '@/services/storage';
+import { supabase } from '@/services/supabase';
 
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Bon Vivant</Text>
-    </View>
-  );
-}
+  const router = useRouter();
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    fontSize: 32,
-    fontWeight: '600',
-  },
-});
+  useEffect(() => {
+    async function init() {
+      const [seen, { data }] = await Promise.all([
+        storage.getOnboardingSeen(),
+        supabase.auth.getSession(),
+      ]);
+
+      if (!seen) {
+        router.replace('/(onboarding)/splash');
+      } else if (data.session) {
+        router.replace('/(app)');
+      } else {
+        router.replace('/(app)');
+      }
+    }
+    init();
+  }, []);
+
+  return null;
+}

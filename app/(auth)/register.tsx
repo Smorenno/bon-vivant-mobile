@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -13,19 +13,18 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { supabase } from '@/services/supabase';
 import { useAuthStore } from '@/stores/authStore';
+import { storage } from '@/services/storage';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
+import { t } from '@/constants/i18n';
+import { Colors } from '@/constants/colors';
 
 function AppleIcon() {
-  return (
-    <Text style={styles.appleIcon}></Text>
-  );
+  return <Text style={styles.appleIcon}></Text>;
 }
 
 function GoogleIcon() {
-  return (
-    <Text style={styles.googleIcon}>G</Text>
-  );
+  return <Text style={styles.googleIcon}>G</Text>;
 }
 
 function validateEmail(email: string): boolean {
@@ -40,6 +39,22 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [cityName, setCityName] = useState('');
+
+  useEffect(() => {
+    storage.getSelectedCity().then((slug) => {
+      if (slug) {
+        const names: Record<string, string> = {
+          barcelona: 'Barcelona',
+          nassau: 'Nassau',
+          athens: 'Athens',
+          yokohama: 'Yokohama',
+          rio: 'Rio de Janeiro',
+        };
+        setCityName(names[slug] ?? slug);
+      }
+    });
+  }, []);
 
   async function handleCreateAccount() {
     setError('');
@@ -53,10 +68,7 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+      const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
       if (signUpError) {
         setError(signUpError.message);
         return;
@@ -64,9 +76,9 @@ export default function Register() {
       if (data.session) {
         setSession(data.session);
       }
-      router.replace('/(onboarding)/welcome');
+      router.replace('/(onboarding)/success');
     } catch {
-      setError('Something went wrong. Please try again.');
+      setError(t('common.error'));
     } finally {
       setLoading(false);
     }
@@ -75,35 +87,19 @@ export default function Register() {
   async function handleApple() {
     const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'apple',
-      options: {
-        redirectTo: 'bonvivant://callback',
-        skipBrowserRedirect: true,
-      },
+      options: { redirectTo: 'bonvivant://callback', skipBrowserRedirect: true },
     });
-    if (oauthError) {
-      setError(oauthError.message);
-      return;
-    }
-    if (data.url) {
-      await Linking.openURL(data.url);
-    }
+    if (oauthError) { setError(oauthError.message); return; }
+    if (data.url) await Linking.openURL(data.url);
   }
 
   async function handleGoogle() {
     const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        redirectTo: 'bonvivant://callback',
-        skipBrowserRedirect: true,
-      },
+      options: { redirectTo: 'bonvivant://callback', skipBrowserRedirect: true },
     });
-    if (oauthError) {
-      setError(oauthError.message);
-      return;
-    }
-    if (data.url) {
-      await Linking.openURL(data.url);
-    }
+    if (oauthError) { setError(oauthError.message); return; }
+    if (data.url) await Linking.openURL(data.url);
   }
 
   return (
@@ -118,23 +114,22 @@ export default function Register() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.container}>
-            <Text style={styles.title}>Save your guide</Text>
+            <Text style={styles.title}>{t('onboarding.register.title')}</Text>
             <Text style={styles.subtitle}>
-              Create a free account to access Barcelona offline and keep your
-              progress.
+              {t('onboarding.register.subtitle', { city: cityName })}
             </Text>
 
             <View style={styles.spacer} />
 
             <Button
-              label="Continue with Apple"
+              label={t('onboarding.register.continueApple')}
               onPress={handleApple}
               variant="primary"
               icon={<AppleIcon />}
               style={styles.socialButton}
             />
             <Button
-              label="Continue with Google"
+              label={t('onboarding.register.continueGoogle')}
               onPress={handleGoogle}
               variant="secondary"
               icon={<GoogleIcon />}
@@ -143,12 +138,12 @@ export default function Register() {
 
             <View style={styles.divider}>
               <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>or</Text>
+              <Text style={styles.dividerText}>{t('onboarding.register.or')}</Text>
               <View style={styles.dividerLine} />
             </View>
 
             <Input
-              placeholder="Email address"
+              placeholder={t('onboarding.register.emailPlaceholder')}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -156,7 +151,7 @@ export default function Register() {
               style={styles.input}
             />
             <Input
-              placeholder="Password"
+              placeholder={t('onboarding.register.passwordPlaceholder')}
               value={password}
               onChangeText={setPassword}
               secureTextEntry
@@ -166,7 +161,7 @@ export default function Register() {
             {error !== '' && <Text style={styles.error}>{error}</Text>}
 
             <Button
-              label="Create account"
+              label={t('onboarding.register.cta')}
               onPress={handleCreateAccount}
               variant="primary"
               loading={loading}
@@ -174,9 +169,9 @@ export default function Register() {
             />
 
             <View style={styles.loginRow}>
-              <Text style={styles.loginText}>Already have an account? </Text>
+              <Text style={styles.loginText}>{t('onboarding.register.hasAccount')} </Text>
               <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
-                <Text style={styles.loginLink}>Log in</Text>
+                <Text style={styles.loginLink}>{t('onboarding.register.login')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -186,7 +181,7 @@ export default function Register() {
           style={styles.skipWrapper}
           onPress={() => router.replace('/(app)')}
         >
-          <Text style={styles.skipText}>Skip for now — I'll explore first</Text>
+          <Text style={styles.skipText}>{t('onboarding.register.skip')}</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -196,7 +191,7 @@ export default function Register() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.background,
   },
   flex: {
     flex: 1,
@@ -213,12 +208,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#111827',
+    color: Colors.text,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#6B7280',
+    color: Colors.textSecondary,
     lineHeight: 20,
   },
   spacer: {
@@ -235,19 +230,19 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: Colors.border,
   },
   dividerText: {
     marginHorizontal: 12,
     fontSize: 14,
-    color: '#6B7280',
+    color: Colors.textSecondary,
   },
   input: {
     marginBottom: 12,
   },
   error: {
     fontSize: 13,
-    color: '#DC2626',
+    color: Colors.error,
     marginBottom: 12,
     marginTop: -4,
   },
@@ -262,11 +257,11 @@ const styles = StyleSheet.create({
   },
   loginText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: Colors.textSecondary,
   },
   loginLink: {
     fontSize: 14,
-    color: '#111827',
+    color: Colors.text,
     fontWeight: '600',
     textDecorationLine: 'underline',
   },
@@ -277,7 +272,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: 13,
-    color: '#9CA3AF',
+    color: Colors.textTertiary,
     textAlign: 'center',
   },
   appleIcon: {

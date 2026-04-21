@@ -1,0 +1,83 @@
+{
+  "onboarding": {
+    "splash": {
+      "tagline": "En voyageur, en ami"
+    },
+    "welcome": {
+      "title": "Bienvenue à bord de Bon Vivant !",
+      "subtitle": "Je suppose que vous êtes un voyageur qui cherche à explorer le monde différemment.",
+      "bio": "Je suis Manuel, Directeur de Croisière depuis 20 ans, et un Bon Vivant comme vous.",
+      "bio2": "J'ai créé des guides pour plus de 50 ports — les endroits que j'envoie vraiment à mes passagers, pas les pièges à touristes.",
+      "cta": "Commencer le voyage"
+    },
+    "valueProps": {
+      "label": "Sélection personnelle",
+      "title": "Tout ce dont vous avez besoin, rien de plus.",
+      "subtitle": "Guides complets, cartes hors ligne, tous mes conseils complètement gratuits.",
+      "feature1Title": "Guides avec sélection personnelle",
+      "feature1Desc": "Chaque restaurant, café et joyau caché choisi par Manuel — pas par un algorithme.",
+      "feature2Title": "Itinéraires par durée",
+      "feature2Desc": "Vous avez 4 heures ou 8 ? Des itinéraires pré-construits pour votre temps exact au port.",
+      "feature3Title": "100% hors ligne",
+      "feature3Desc": "Cartes, guides, tout. Fonctionne sans WiFi ni données. Ouvrez une fois, explorez librement.",
+      "cta": "Choisir ma ville gratuite"
+    },
+    "pickCity": {
+      "label": "Votre premier guide",
+      "title": "Choisissez une ville, c'est offert.",
+      "subtitle": "Guide complet, cartes hors ligne, tous mes conseils complètement gratuits.",
+      "freeBadge": "Gratuit"
+    },
+    "preview": {
+      "sectionTitle": "Ce qu'il y a dans votre guide",
+      "feature1Title": "3 itinéraires",
+      "feature1Desc": "4h, 6h, 8h — choisissez votre durée",
+      "feature2Title": "12 lieux sélectionnés",
+      "feature2Desc": "Restaurants, cafés, joyaux cachés",
+      "feature3Title": "Conseils Bon Vivant",
+      "feature3Desc": "Ce que seuls les locaux savent",
+      "feature4Title": "Carte interactive hors ligne",
+      "feature4Desc": "Navigation du port à chaque endroit",
+      "cta": "Ouvrir mon guide gratuit",
+      "saveProgress": "Créez un compte gratuit pour sauvegarder votre progression",
+      "skip": "Passer pour l'instant — j'explorerai d'abord",
+      "reviews": "avis"
+    },
+    "register": {
+      "title": "Sauvegardez votre guide",
+      "subtitle": "Créez un compte gratuit pour accéder à {city} hors ligne et garder votre progression.",
+      "continueApple": "Continuer avec Apple",
+      "continueGoogle": "Continuer avec Google",
+      "or": "ou",
+      "emailPlaceholder": "Adresse e-mail",
+      "passwordPlaceholder": "Mot de passe",
+      "cta": "Créer un compte",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "login": "Se connecter",
+      "skip": "Passer pour l'instant — j'explorerai d'abord"
+    },
+    "success": {
+      "title": "Tout est prêt !",
+      "subtitle": "Votre guide de {city} est prêt.",
+      "done": "Commencer"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bon retour",
+      "subtitle": "Connectez-vous pour accéder à vos guides.",
+      "emailPlaceholder": "Adresse e-mail",
+      "passwordPlaceholder": "Mot de passe",
+      "cta": "Se connecter",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "register": "S'inscrire",
+      "forgotPassword": "Mot de passe oublié ?"
+    }
+  },
+  "common": {
+    "back": "Retour",
+    "loading": "Chargement...",
+    "error": "Quelque chose s'est mal passé. Veuillez réessayer.",
+    "retry": "Réessayer"
+  }
+}

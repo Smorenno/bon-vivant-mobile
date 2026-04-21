@@ -1,0 +1,83 @@
+{
+  "onboarding": {
+    "splash": {
+      "tagline": "Como viajero, como amigo"
+    },
+    "welcome": {
+      "title": "¡Bienvenido a Bon Vivant!",
+      "subtitle": "Supongo que eres un viajero que busca explorar el mundo de otra manera.",
+      "bio": "Soy Manuel, Director de Cruceros con 20 años de experiencia, y un Bon Vivant como tú.",
+      "bio2": "He creado guías para más de 50 puertos — los lugares que realmente recomiendo a mis pasajeros, no las trampas turísticas.",
+      "cta": "Comenzar el viaje"
+    },
+    "valueProps": {
+      "label": "Selección personal",
+      "title": "Todo lo que necesitas, nada más.",
+      "subtitle": "Guías completas, mapas offline, todos mis consejos completamente gratis.",
+      "feature1Title": "Guías con selección personal",
+      "feature1Desc": "Cada restaurante, café y joya escondida elegida por Manuel — no por un algoritmo.",
+      "feature2Title": "Itinerarios por duración",
+      "feature2Desc": "¿Tienes 4 horas u 8? Rutas pre-diseñadas para tu tiempo exacto en el puerto.",
+      "feature3Title": "100% sin conexión",
+      "feature3Desc": "Mapas, guías, todo. Funciona sin WiFi ni datos. Ábrelo una vez, explora libremente.",
+      "cta": "Elegir mi ciudad gratis"
+    },
+    "pickCity": {
+      "label": "Tu primera guía",
+      "title": "Elige una ciudad, es mi regalo.",
+      "subtitle": "Guía completa, mapas offline, todos mis consejos completamente gratis.",
+      "freeBadge": "Gratis"
+    },
+    "preview": {
+      "sectionTitle": "Qué hay en tu guía",
+      "feature1Title": "3 itinerarios",
+      "feature1Desc": "4h, 6h, 8h — elige tu duración",
+      "feature2Title": "12 lugares seleccionados",
+      "feature2Desc": "Restaurantes, cafés, joyas escondidas",
+      "feature3Title": "Consejos Bon Vivant",
+      "feature3Desc": "Lo que solo los locales saben",
+      "feature4Title": "Mapa interactivo sin conexión",
+      "feature4Desc": "Navegación desde el puerto a cada lugar",
+      "cta": "Abrir mi guía gratis",
+      "saveProgress": "Crea una cuenta gratis para guardar tu progreso",
+      "skip": "Omitir por ahora — exploraré primero",
+      "reviews": "reseñas"
+    },
+    "register": {
+      "title": "Guarda tu guía",
+      "subtitle": "Crea una cuenta gratis para acceder a {city} sin conexión y guardar tu progreso.",
+      "continueApple": "Continuar con Apple",
+      "continueGoogle": "Continuar con Google",
+      "or": "o",
+      "emailPlaceholder": "Correo electrónico",
+      "passwordPlaceholder": "Contraseña",
+      "cta": "Crear cuenta",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "login": "Iniciar sesión",
+      "skip": "Omitir por ahora — exploraré primero"
+    },
+    "success": {
+      "title": "¡Todo listo!",
+      "subtitle": "Tu guía de {city} está lista.",
+      "done": "Empezar"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Inicia sesión para acceder a tus guías.",
+      "emailPlaceholder": "Correo electrónico",
+      "passwordPlaceholder": "Contraseña",
+      "cta": "Iniciar sesión",
+      "noAccount": "¿No tienes cuenta?",
+      "register": "Registrarse",
+      "forgotPassword": "¿Olvidaste tu contraseña?"
+    }
+  },
+  "common": {
+    "back": "Volver",
+    "loading": "Cargando...",
+    "error": "Algo salió mal. Por favor, inténtalo de nuevo.",
+    "retry": "Reintentar"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "onboarding": {
+    "splash": {
+      "tagline": "As a traveller, as a friend"
+    },
+    "welcome": {
+      "title": "Welcome aboard Bon Vivant!",
+      "subtitle": "I assume you are a traveller looking to explore our world differently.",
+      "bio": "I'm Manuel, Cruise Director for 20 years, and a Bon Vivant just like you.",
+      "bio2": "I've created insider guides for 50+ port cities — the places I actually send my passengers, not the tourist traps.",
+      "cta": "Begin the journey"
+    },
+    "valueProps": {
+      "label": "Hand-picked",
+      "title": "Everything you need, nothing you don't.",
+      "subtitle": "Full guides, offline maps, all my tips completely free.",
+      "feature1Title": "Insider-curated guides",
+      "feature1Desc": "Every restaurant, café and hidden gem hand-picked by Manuel — not an algorithm.",
+      "feature2Title": "Itineraries by duration",
+      "feature2Desc": "Got 4 hours or 8? Pre-built routes optimized for your exact time at port.",
+      "feature3Title": "100% offline",
+      "feature3Desc": "Maps, guides, everything. Works without WiFi or data. Open once, explore freely.",
+      "cta": "Pick your free city"
+    },
+    "pickCity": {
+      "label": "Your first guide",
+      "title": "Choose a city, it's on me.",
+      "subtitle": "Full guide, offline maps, all my tips completely free.",
+      "freeBadge": "Free"
+    },
+    "preview": {
+      "sectionTitle": "What's inside your guide",
+      "feature1Title": "3 itineraries",
+      "feature1Desc": "4h, 6h, 8h — pick your pack",
+      "feature2Title": "12 curated spots",
+      "feature2Desc": "Restaurants, cafés, hidden gems",
+      "feature3Title": "Bon Vivant insider tips",
+      "feature3Desc": "The things only locals would know",
+      "feature4Title": "Interactive offline map",
+      "feature4Desc": "Navigation from port to every spot",
+      "cta": "Open my free guide",
+      "saveProgress": "Create a free account to save your progress",
+      "skip": "Skip for now — I'll explore first",
+      "reviews": "reviews"
+    },
+    "register": {
+      "title": "Save your guide",
+      "subtitle": "Create a free account to access {city} offline and keep your progress.",
+      "continueApple": "Continue with Apple",
+      "continueGoogle": "Continue with Google",
+      "or": "or",
+      "emailPlaceholder": "Email address",
+      "passwordPlaceholder": "Password",
+      "cta": "Create account",
+      "hasAccount": "Already have an account?",
+      "login": "Log in",
+      "skip": "Skip for now — I'll explore first"
+    },
+    "success": {
+      "title": "You're all set!",
+      "subtitle": "Your {city} guide is ready.",
+      "done": "Done"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to access your guides.",
+      "emailPlaceholder": "Email address",
+      "passwordPlaceholder": "Password",
+      "cta": "Log in",
+      "noAccount": "Don't have an account?",
+      "register": "Sign up",
+      "forgotPassword": "Forgot password?"
+    }
+  },
+  "common": {
+    "back": "Back",
+    "loading": "Loading...",
+    "error": "Something went wrong. Please try again.",
+    "retry": "Retry"
+  }
+}
