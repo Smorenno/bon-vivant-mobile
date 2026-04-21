@@ -72,6 +72,25 @@
       "noAccount": "Vous n'avez pas de compte ?",
       "register": "S'inscrire",
       "forgotPassword": "Mot de passe oublié ?"
+    },
+    "forgotPassword": {
+      "title": "Réinitialiser votre mot de passe",
+      "subtitle": "Entrez votre email et nous vous enverrons un lien de réinitialisation.",
+      "emailPlaceholder": "Adresse e-mail",
+      "cta": "Envoyer le lien",
+      "backToLogin": "Retour à la connexion"
+    },
+    "errors": {
+      "invalidEmail": "Veuillez entrer une adresse email valide.",
+      "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+      "passwordTooLong": "Le mot de passe est trop long.",
+      "passwordWeak": "Veuillez choisir un mot de passe plus fort.",
+      "invalidCredentials": "Email ou mot de passe incorrect.",
+      "confirmEmail": "Vérifiez votre email pour confirmer votre compte.",
+      "resetSent": "Si un compte existe pour cet email, vous recevrez un lien de réinitialisation.",
+      "rateLimit": "Trop de tentatives. Veuillez patienter un moment.",
+      "network": "Erreur de connexion. Vérifiez votre internet et réessayez.",
+      "generic": "Quelque chose s'est mal passé. Veuillez réessayer."
     }
   },
   "common": {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { Feather } from '@expo/vector-icons';
 import { supabase } from '@/services/supabase';
-import { useAuthStore } from '@/stores/authStore';
 import { storage } from '@/services/storage';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
@@ -27,19 +27,32 @@ function GoogleIcon() {
   return <Text style={styles.googleIcon}>G</Text>;
 }
 
-function validateEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+function getMappedError(message: string): string {
+  if (message.includes('already registered') || message.includes('already exists')) {
+    return t('auth.errors.generic');
+  }
+  if (message.includes('password') && message.includes('weak')) {
+    return t('auth.errors.passwordWeak');
+  }
+  if (message.includes('rate limit') || message.includes('too many')) {
+    return t('auth.errors.rateLimit');
+  }
+  if (message.includes('network') || message.includes('fetch')) {
+    return t('auth.errors.network');
+  }
+  return t('auth.errors.generic');
 }
 
 export default function Register() {
   const router = useRouter();
-  const setSession = useAuthStore((s) => s.setSession);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [cityName, setCityName] = useState('');
+  const lastAttemptTime = useRef<number>(0);
 
   useEffect(() => {
     storage.getSelectedCity().then((slug) => {
@@ -56,32 +69,59 @@ export default function Register() {
     });
   }, []);
 
-  async function handleCreateAccount() {
-    setError('');
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email address.');
+  useEffect(() => {
+    return () => {
+      setError('');
+    };
+  }, []);
+
+  function validateForm(): string | null {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim().toLowerCase())) {
+      return t('auth.errors.invalidEmail');
+    }
+    if (password.length < 8) {
+      return t('auth.errors.passwordTooShort');
+    }
+    if (password.length > 128) {
+      return t('auth.errors.passwordTooLong');
+    }
+    return null;
+  }
+
+  async function handleRegister() {
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
       return;
     }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
-      return;
-    }
+
+    const now = Date.now();
+    if (now - lastAttemptTime.current < 2000) return;
+    lastAttemptTime.current = now;
+
     setLoading(true);
-    try {
-      const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
-      if (signUpError) {
-        setError(signUpError.message);
-        return;
-      }
-      if (data.session) {
-        setSession(data.session);
-      }
-      router.replace('/(onboarding)/success');
-    } catch {
-      setError(t('common.error'));
-    } finally {
-      setLoading(false);
+    setError('');
+
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email: email.trim().toLowerCase(),
+      password,
+    });
+
+    setLoading(false);
+
+    if (signUpError) {
+      setError(getMappedError(signUpError.message));
+      return;
     }
+
+    if (data.session) {
+      router.replace('/(app)');
+      return;
+    }
+
+    // No session = email confirmation pending
+    setError(t('auth.errors.confirmEmail'));
   }
 
   async function handleApple() {
@@ -89,7 +129,7 @@ export default function Register() {
       provider: 'apple',
       options: { redirectTo: 'bonvivant://callback', skipBrowserRedirect: true },
     });
-    if (oauthError) { setError(oauthError.message); return; }
+    if (oauthError) { setError(getMappedError(oauthError.message)); return; }
     if (data.url) await Linking.openURL(data.url);
   }
 
@@ -98,7 +138,7 @@ export default function Register() {
       provider: 'google',
       options: { redirectTo: 'bonvivant://callback', skipBrowserRedirect: true },
     });
-    if (oauthError) { setError(oauthError.message); return; }
+    if (oauthError) { setError(getMappedError(oauthError.message)); return; }
     if (data.url) await Linking.openURL(data.url);
   }
 
@@ -150,19 +190,32 @@ export default function Register() {
               autoCapitalize="none"
               style={styles.input}
             />
-            <Input
-              placeholder={t('onboarding.register.passwordPlaceholder')}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              style={styles.input}
-            />
+            <View style={styles.passwordWrapper}>
+              <Input
+                placeholder={t('onboarding.register.passwordPlaceholder')}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                style={styles.passwordInput}
+              />
+              <TouchableOpacity
+                style={styles.eyeToggle}
+                onPress={() => setShowPassword((v) => !v)}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Feather
+                  name={showPassword ? 'eye-off' : 'eye'}
+                  size={20}
+                  color={Colors.textTertiary}
+                />
+              </TouchableOpacity>
+            </View>
 
             {error !== '' && <Text style={styles.error}>{error}</Text>}
 
             <Button
               label={t('onboarding.register.cta')}
-              onPress={handleCreateAccount}
+              onPress={handleRegister}
               variant="primary"
               loading={loading}
               style={styles.submitButton}
@@ -239,6 +292,20 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 12,
+  },
+  passwordWrapper: {
+    position: 'relative',
+    marginBottom: 12,
+  },
+  passwordInput: {
+    paddingRight: 48,
+  },
+  eyeToggle: {
+    position: 'absolute',
+    right: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
   },
   error: {
     fontSize: 13,

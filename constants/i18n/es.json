@@ -72,6 +72,25 @@
       "noAccount": "¿No tienes cuenta?",
       "register": "Registrarse",
       "forgotPassword": "¿Olvidaste tu contraseña?"
+    },
+    "forgotPassword": {
+      "title": "Restablecer contraseña",
+      "subtitle": "Introduce tu email y te enviaremos un enlace de restablecimiento.",
+      "emailPlaceholder": "Correo electrónico",
+      "cta": "Enviar enlace",
+      "backToLogin": "Volver al inicio de sesión"
+    },
+    "errors": {
+      "invalidEmail": "Por favor introduce un email válido.",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
+      "passwordTooLong": "La contraseña es demasiado larga.",
+      "passwordWeak": "Por favor elige una contraseña más segura.",
+      "invalidCredentials": "Email o contraseña incorrectos.",
+      "confirmEmail": "Revisa tu email para confirmar tu cuenta.",
+      "resetSent": "Si existe una cuenta con este email, recibirás un enlace de restablecimiento.",
+      "rateLimit": "Demasiados intentos. Por favor espera un momento.",
+      "network": "Error de conexión. Comprueba tu internet e inténtalo de nuevo.",
+      "generic": "Algo salió mal. Por favor inténtalo de nuevo."
     }
   },
   "common": {

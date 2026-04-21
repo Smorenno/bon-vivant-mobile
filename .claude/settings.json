@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pkill -f \"expo start\")",
+      "Bash(pkill -f \"metro\")",
+      "Bash(watchman watch-del *)",
+      "Bash(watchman watch *)"
+    ]
+  },
+  "systemPrompt": "Always read STANDARDS.md before writing any code."
+}

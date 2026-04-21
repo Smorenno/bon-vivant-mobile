@@ -72,6 +72,25 @@
       "noAccount": "Don't have an account?",
       "register": "Sign up",
       "forgotPassword": "Forgot password?"
+    },
+    "forgotPassword": {
+      "title": "Reset your password",
+      "subtitle": "Enter your email and we'll send you a reset link.",
+      "emailPlaceholder": "Email address",
+      "cta": "Send reset link",
+      "backToLogin": "Back to login"
+    },
+    "errors": {
+      "invalidEmail": "Please enter a valid email address.",
+      "passwordTooShort": "Password must be at least 8 characters.",
+      "passwordTooLong": "Password is too long.",
+      "passwordWeak": "Please choose a stronger password.",
+      "invalidCredentials": "Incorrect email or password.",
+      "confirmEmail": "Check your email to confirm your account.",
+      "resetSent": "If an account exists for this email, you'll receive a reset link.",
+      "rateLimit": "Too many attempts. Please wait a moment and try again.",
+      "network": "Connection error. Please check your internet and try again.",
+      "generic": "Something went wrong. Please try again."
     }
   },
   "common": {
