@@ -65,20 +65,34 @@
   "auth": {
     "login": {
       "title": "Bienvenido de nuevo",
-      "subtitle": "Inicia sesión para acceder a tus guías.",
+      "subtitle": "Inicia sesión para acceder a tus guías sin conexión y guardar tu progreso.",
       "emailPlaceholder": "Correo electrónico",
       "passwordPlaceholder": "Contraseña",
       "cta": "Iniciar sesión",
-      "noAccount": "¿No tienes cuenta?",
-      "register": "Registrarse",
-      "forgotPassword": "¿Olvidaste tu contraseña?"
+      "forgotPassword": "Olvidé mi contraseña",
+      "resetPassword": "Restablecer contraseña",
+      "createAccount": "Crear una cuenta",
+      "skip": "Omitir por ahora — exploraré primero"
     },
     "forgotPassword": {
-      "title": "Restablecer contraseña",
-      "subtitle": "Introduce tu email y te enviaremos un enlace de restablecimiento.",
+      "title": "Restablecimiento de contraseña",
+      "subtitle": "Recibirás un código al hacer clic en enviar código. Revisa tu bandeja de entrada y spam. Puede tardar unos segundos.",
       "emailPlaceholder": "Correo electrónico",
-      "cta": "Enviar enlace",
-      "backToLogin": "Volver al inicio de sesión"
+      "sendCode": "Enviar código",
+      "resendCode": "Reenviar código",
+      "didNotReceive": "No recibí mi código"
+    },
+    "newPassword": {
+      "title": "Nueva contraseña",
+      "subtitle": "Después de restablecer tu contraseña tendrás acceso a tus guías sin conexión.",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar nueva contraseña",
+      "cta": "Restablecer contraseña"
+    },
+    "passwordSuccess": {
+      "title": "¡Todo listo!",
+      "subtitle": "Tu nueva contraseña está configurada.",
+      "redirecting": "Llevándote a inicio..."
     },
     "errors": {
       "invalidEmail": "Por favor introduce un email válido.",
@@ -90,7 +104,11 @@
       "resetSent": "Si existe una cuenta con este email, recibirás un enlace de restablecimiento.",
       "rateLimit": "Demasiados intentos. Por favor espera un momento.",
       "network": "Error de conexión. Comprueba tu internet e inténtalo de nuevo.",
-      "generic": "Algo salió mal. Por favor inténtalo de nuevo."
+      "generic": "Algo salió mal. Por favor inténtalo de nuevo.",
+      "invalidCode": "Código inválido o expirado. Por favor inténtalo de nuevo.",
+      "passwordsDoNotMatch": "Las contraseñas no coinciden.",
+      "tooManyAttempts": "Demasiados intentos. Por favor inténtalo más tarde.",
+      "codeSent": "Código enviado. Revisa tu bandeja de entrada y spam."
     }
   },
   "common": {
@@ -98,5 +116,47 @@
     "loading": "Cargando...",
     "error": "Algo salió mal. Por favor, inténtalo de nuevo.",
     "retry": "Reintentar"
+  },
+  "home": {
+    "welcomeBack": "Bienvenido de nuevo",
+    "nextCruise": "Próximo crucero",
+    "addCruiseDate": "Añadir fecha de crucero",
+    "daysLeft": "{days} días",
+    "verifyEmail": "Verifica tu correo",
+    "verifyEmailSub": "Toca el enlace que te enviamos para desbloquear el modo sin conexión",
+    "resend": "Reenviar",
+    "myGuides": "Mis Guías",
+    "cityUnlocked": "{count} ciudad desbloqueada",
+    "addDestination": "Añadir destino",
+    "fromPrice": "Desde $9.99",
+    "guidesBadge": "{count} guía",
+    "itinerariesBadge": "{count} itinerarios",
+    "nextPort": "Próximo puerto",
+    "planCruise": "Planifica tu próximo crucero",
+    "planCruiseSub": "Añade las fechas de tu crucero y los puertos para obtener consejos personalizados para cada parada.",
+    "setupCruise": "Configurar mi crucero",
+    "openGuide": "Abrir guía",
+    "viewItinerary": "Ver itinerario",
+    "discover": "Descubrir",
+    "discoverSub": "Elaborado por Bon Vivant • 50+ Destinos",
+    "filterAll": "Todos",
+    "filterRoute": "En tu ruta",
+    "filterMed": "Mediterráneo",
+    "filterCaribbean": "Caribe",
+    "bonVivantTips": "Consejos Bon Vivant",
+    "bonVivantTipsSub": "20 años de experiencia en cruceros, destilados",
+    "cruisePack": "¿Tu crucero tiene {count} puertos?",
+    "cruisePackSub": "Obtén todos los destinos en un solo pack",
+    "cruisePackCta": "Ver Pack Crucero • $24.99",
+    "bonVivantAttr": "— Bon Vivant",
+    "guestBanner": "Estás navegando como invitado",
+    "guestBannerSub": "Guarda tu guía y accede sin conexión.",
+    "guestBannerCta": "Registrarse gratis"
+  },
+  "guest": {
+    "lockedTitle": "Crea una cuenta gratis",
+    "lockedSub": "Regístrate para desbloquear esta función.",
+    "cta": "Crear cuenta",
+    "maybeLater": "Quizás más tarde"
   }
 }

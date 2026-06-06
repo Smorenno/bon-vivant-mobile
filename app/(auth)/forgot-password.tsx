@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
+  TextInput,
   TouchableOpacity,
   StyleSheet,
   KeyboardAvoidingView,
@@ -17,36 +18,101 @@ import { t } from '@/constants/i18n';
 import { Colors } from '@/constants/colors';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const OTP_LENGTH = 6;
+const MAX_RESEND_ATTEMPTS = 3;
+const RESEND_COOLDOWN_MS = 3000;
 
 export default function ForgotPassword() {
   const router = useRouter();
 
   const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(''));
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  const lastAttemptTime = useRef<number>(0);
+  const [codeSent, setCodeSent] = useState(false);
+  const [resendCount, setResendCount] = useState(0);
 
-  async function handleReset() {
+  const inputRefs = useRef<Array<TextInput | null>>(Array(OTP_LENGTH).fill(null));
+  const lastSendTime = useRef<number>(0);
+
+  async function handleSendCode() {
     if (!emailRegex.test(email.trim().toLowerCase())) {
       setError(t('auth.errors.invalidEmail'));
       return;
     }
 
+    if (resendCount >= MAX_RESEND_ATTEMPTS) {
+      setError(t('auth.errors.tooManyAttempts'));
+      return;
+    }
+
     const now = Date.now();
-    if (now - lastAttemptTime.current < 3000) return;
-    lastAttemptTime.current = now;
+    if (now - lastSendTime.current < RESEND_COOLDOWN_MS) return;
+    lastSendTime.current = now;
 
     setLoading(true);
     setError('');
 
     // Fire and forget — never expose whether user exists
-    await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase());
+    await supabase.auth.signInWithOtp({ email: email.trim().toLowerCase() });
 
     setLoading(false);
-    // Always show success — never show error
-    setSuccess(true);
+    setCodeSent(true);
+    setResendCount((c) => c + 1);
+    setOtp(Array(OTP_LENGTH).fill(''));
   }
+
+  async function verifyCode(code: string) {
+    setVerifying(true);
+    setError('');
+
+    const { error: verifyError } = await supabase.auth.verifyOtp({
+      email: email.trim().toLowerCase(),
+      token: code,
+      type: 'email',
+    });
+
+    setVerifying(false);
+
+    if (verifyError) {
+      setError(t('auth.errors.invalidCode'));
+      setOtp(Array(OTP_LENGTH).fill(''));
+      inputRefs.current[0]?.focus();
+      return;
+    }
+
+    router.push('/(auth)/new-password');
+  }
+
+  function handleOtpChange(text: string, index: number) {
+    // Accept only single numeric digit
+    const digit = text.replace(/[^0-9]/g, '').slice(-1);
+    const newOtp = [...otp];
+    newOtp[index] = digit;
+    setOtp(newOtp);
+
+    if (digit && index < OTP_LENGTH - 1) {
+      inputRefs.current[index + 1]?.focus();
+    }
+
+    // Auto-verify when all 6 digits are filled
+    if (digit && index === OTP_LENGTH - 1) {
+      const code = [...newOtp.slice(0, OTP_LENGTH - 1), digit].join('');
+      if (code.length === OTP_LENGTH && !code.includes('')) {
+        verifyCode(code);
+      }
+    }
+  }
+
+  function handleOtpKeyPress(key: string, index: number) {
+    if (key === 'Backspace' && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  }
+
+  const otpComplete = otp.every((d) => d !== '');
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
@@ -65,34 +131,59 @@ export default function ForgotPassword() {
 
             <View style={styles.spacer} />
 
-            {success ? (
-              <View style={styles.successBox}>
-                <Text style={styles.successText}>{t('auth.errors.resetSent')}</Text>
-              </View>
-            ) : (
-              <>
-                <Input
-                  placeholder={t('auth.forgotPassword.emailPlaceholder')}
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  style={styles.input}
-                />
-                {error !== '' && <Text style={styles.error}>{error}</Text>}
-                <Button
-                  label={t('auth.forgotPassword.cta')}
-                  onPress={handleReset}
-                  variant="primary"
-                  loading={loading}
-                  style={styles.submitButton}
-                />
-              </>
-            )}
+            <Input
+              placeholder={t('auth.forgotPassword.emailPlaceholder')}
+              value={email}
+              onChangeText={(v) => { setEmail(v); setError(''); }}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={styles.input}
+              editable={!codeSent}
+            />
 
-            <TouchableOpacity style={styles.backLink} onPress={() => router.back()}>
-              <Text style={styles.backLinkText}>{t('auth.forgotPassword.backToLogin')}</Text>
-            </TouchableOpacity>
+            <View style={styles.otpRow}>
+              {Array.from({ length: OTP_LENGTH }).map((_, i) => (
+                <TextInput
+                  key={i}
+                  ref={(ref) => { inputRefs.current[i] = ref; }}
+                  style={[
+                    styles.otpBox,
+                    focusedIndex === i && styles.otpBoxFocused,
+                    otp[i] !== '' && styles.otpBoxFilled,
+                  ]}
+                  value={otp[i]}
+                  onChangeText={(text) => handleOtpChange(text, i)}
+                  onKeyPress={({ nativeEvent }) => handleOtpKeyPress(nativeEvent.key, i)}
+                  onFocus={() => setFocusedIndex(i)}
+                  onBlur={() => setFocusedIndex(null)}
+                  keyboardType="number-pad"
+                  maxLength={1}
+                  textAlign="center"
+                  selectTextOnFocus
+                  editable={codeSent && !verifying}
+                  contextMenuHidden
+                />
+              ))}
+            </View>
+
+            {error !== '' && <Text style={styles.error}>{error}</Text>}
+
+            <Button
+              label={codeSent ? t('auth.forgotPassword.resendCode') : t('auth.forgotPassword.sendCode')}
+              onPress={handleSendCode}
+              variant="primary"
+              loading={loading || verifying}
+              style={styles.submitButton}
+            />
+
+            {codeSent && (
+              <View style={styles.resendRow}>
+                <Text style={styles.resendText}>{t('auth.forgotPassword.didNotReceive')} • </Text>
+                <TouchableOpacity onPress={handleSendCode}>
+                  <Text style={styles.tealLink}>{t('auth.forgotPassword.resendCode')}</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -118,50 +209,67 @@ const styles = StyleSheet.create({
     paddingTop: 32,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '700',
-    color: Colors.text,
+    color: '#111827',
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    lineHeight: 20,
+    fontSize: 15,
+    color: '#6B7280',
+    lineHeight: 22,
   },
   spacer: {
-    height: 28,
+    height: 24,
   },
   input: {
-    marginBottom: 12,
+    marginBottom: 20,
+  },
+  otpRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    gap: 8,
+  },
+  otpBox: {
+    flex: 1,
+    height: 56,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 10,
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#111827',
+    backgroundColor: Colors.background,
+  },
+  otpBoxFocused: {
+    borderColor: '#111827',
+    borderWidth: 1.5,
+  },
+  otpBoxFilled: {
+    borderColor: '#6B7280',
   },
   error: {
     fontSize: 13,
     color: Colors.error,
     marginBottom: 12,
-    marginTop: -4,
+    marginTop: -8,
   },
   submitButton: {
-    marginTop: 4,
-    marginBottom: 20,
+    marginBottom: 16,
   },
-  successBox: {
-    backgroundColor: '#F0FDF4',
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 20,
-  },
-  successText: {
-    fontSize: 14,
-    color: '#166534',
-    lineHeight: 20,
-  },
-  backLink: {
+  resendRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
   },
-  backLinkText: {
-    fontSize: 14,
+  resendText: {
+    fontSize: 13,
     color: Colors.textSecondary,
-    textDecorationLine: 'underline',
+  },
+  tealLink: {
+    fontSize: 13,
+    color: Colors.teal,
+    fontWeight: '500',
   },
 });

@@ -12,6 +12,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { supabase } from '@/services/supabase';
+import { storage } from '@/services/storage';
+import { useAuthStore } from '@/stores/authStore';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { t } from '@/constants/i18n';
@@ -24,7 +26,6 @@ function getMappedError(message: string): string {
     message.includes('Email not confirmed') ||
     message.includes('User not found')
   ) {
-    // All map to same message — prevents user enumeration
     return t('auth.errors.invalidCredentials');
   }
   if (message.includes('rate limit') || message.includes('too many')) {
@@ -38,6 +39,7 @@ function getMappedError(message: string): string {
 
 export default function Login() {
   const router = useRouter();
+  const setGuest = useAuthStore((s) => s.setGuest);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,9 +49,7 @@ export default function Login() {
   const lastAttemptTime = useRef<number>(0);
 
   useEffect(() => {
-    return () => {
-      setError('');
-    };
+    return () => { setError(''); };
   }, []);
 
   function validateForm(): string | null {
@@ -92,6 +92,8 @@ export default function Login() {
       return;
     }
 
+    await storage.clearGuestMode();
+    setGuest(false);
     router.replace('/(app)');
   }
 
@@ -111,6 +113,26 @@ export default function Login() {
             <Text style={styles.subtitle}>{t('auth.login.subtitle')}</Text>
 
             <View style={styles.spacer} />
+
+            {/* Social buttons — hidden for now, do not delete
+            <Button
+              label={t('auth.login.continueApple')}
+              onPress={() => {}}
+              variant="primary"
+              style={styles.socialButton}
+            />
+            <Button
+              label={t('auth.login.continueGoogle')}
+              onPress={() => {}}
+              variant="secondary"
+              style={styles.socialButton}
+            />
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or</Text>
+              <View style={styles.dividerLine} />
+            </View>
+            */}
 
             <Input
               placeholder={t('auth.login.emailPlaceholder')}
@@ -141,13 +163,6 @@ export default function Login() {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              style={styles.forgotPassword}
-              onPress={() => router.push('/(auth)/forgot-password')}
-            >
-              <Text style={styles.forgotPasswordText}>{t('auth.login.forgotPassword')}</Text>
-            </TouchableOpacity>
-
             {error !== '' && <Text style={styles.error}>{error}</Text>}
 
             <Button
@@ -158,14 +173,30 @@ export default function Login() {
               style={styles.submitButton}
             />
 
-            <View style={styles.registerRow}>
-              <Text style={styles.registerText}>{t('auth.login.noAccount')} </Text>
+            <View style={styles.bottomLinks}>
+              <View style={styles.forgotRow}>
+                <Text style={styles.smallText}>{t('auth.login.forgotPassword')} • </Text>
+                <TouchableOpacity onPress={() => router.push('/(auth)/forgot-password')}>
+                  <Text style={styles.tealLink}>{t('auth.login.resetPassword')}</Text>
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
-                <Text style={styles.registerLink}>{t('auth.login.register')}</Text>
+                <Text style={styles.tealLink}>{t('auth.login.createAccount')}</Text>
               </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
+
+        <TouchableOpacity
+          style={styles.skipWrapper}
+          onPress={async () => {
+            await storage.setGuestMode();
+            setGuest(true);
+            router.replace('/(app)');
+          }}
+        >
+          <Text style={styles.skipText}>{t('auth.login.skip')}</Text>
+        </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -189,25 +220,25 @@ const styles = StyleSheet.create({
     paddingTop: 32,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '700',
-    color: Colors.text,
+    color: '#111827',
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    lineHeight: 20,
+    fontSize: 15,
+    color: '#6B7280',
+    lineHeight: 22,
   },
   spacer: {
-    height: 28,
+    height: 24,
   },
   input: {
     marginBottom: 12,
   },
   passwordWrapper: {
     position: 'relative',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   passwordInput: {
     paddingRight: 48,
@@ -219,16 +250,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
   },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginTop: 4,
-    marginBottom: 16,
-  },
-  forgotPasswordText: {
-    fontSize: 13,
-    color: Colors.textSecondary,
-    textDecorationLine: 'underline',
-  },
   error: {
     fontSize: 13,
     color: Colors.error,
@@ -238,19 +259,31 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 20,
   },
-  registerRow: {
+  bottomLinks: {
+    alignItems: 'center',
+    gap: 10,
+  },
+  forgotRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
   },
-  registerText: {
-    fontSize: 14,
+  smallText: {
+    fontSize: 13,
     color: Colors.textSecondary,
   },
-  registerLink: {
-    fontSize: 14,
-    color: Colors.text,
-    fontWeight: '600',
-    textDecorationLine: 'underline',
+  tealLink: {
+    fontSize: 13,
+    color: Colors.teal,
+    fontWeight: '500',
+  },
+  skipWrapper: {
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+  },
+  skipText: {
+    fontSize: 13,
+    color: Colors.textTertiary,
+    textAlign: 'center',
   },
 });

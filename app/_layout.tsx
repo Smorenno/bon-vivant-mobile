@@ -2,31 +2,39 @@ import { useEffect, useState } from 'react';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from '@/services/supabase';
+import { storage } from '@/services/storage';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const segments = useSegments();
+  const isGuest = useAuthStore((s) => s.isGuest);
+  const setGuest = useAuthStore((s) => s.setGuest);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+    Promise.all([
+      supabase.auth.getSession(),
+      storage.getGuestMode(),
+    ]).then(([{ data: { session: initialSession } }, guestMode]) => {
+      setSession(initialSession);
+      if (guestMode) setGuest(true);
       setIsLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      (event, newSession) => {
         if (event === 'SIGNED_OUT') {
           setSession(null);
           router.replace('/(onboarding)/splash');
           return;
         }
         if (event === 'TOKEN_REFRESHED') {
-          setSession(session);
+          setSession(newSession);
           return;
         }
-        setSession(session);
+        setSession(newSession);
       }
     );
     return () => subscription.unsubscribe();
@@ -38,7 +46,8 @@ export default function RootLayout() {
     const inAuth = segments[0] === '(auth)';
     const inOnboarding = segments[0] === '(onboarding)';
 
-    if (!session && inApp) {
+    // Guests are allowed into /(app) without a session
+    if (!session && !isGuest && inApp) {
       router.replace('/(onboarding)/splash');
       return;
     }
@@ -46,7 +55,7 @@ export default function RootLayout() {
       router.replace('/(app)');
       return;
     }
-  }, [session, isLoading, segments]);
+  }, [session, isGuest, isLoading, segments]);
 
   return <Slot />;
 }

@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { supabase } from '@/services/supabase';
 import { storage } from '@/services/storage';
+import { useAuthStore } from '@/stores/authStore';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { t } from '@/constants/i18n';
@@ -45,6 +46,7 @@ function getMappedError(message: string): string {
 
 export default function Register() {
   const router = useRouter();
+  const setGuest = useAuthStore((s) => s.setGuest);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -116,6 +118,8 @@ export default function Register() {
     }
 
     if (data.session) {
+      await storage.clearGuestMode();
+      setGuest(false);
       router.replace('/(app)');
       return;
     }
@@ -232,7 +236,11 @@ export default function Register() {
 
         <TouchableOpacity
           style={styles.skipWrapper}
-          onPress={() => router.replace('/(app)')}
+          onPress={async () => {
+            await storage.setGuestMode();
+            setGuest(true);
+            router.replace('/(app)');
+          }}
         >
           <Text style={styles.skipText}>{t('onboarding.register.skip')}</Text>
         </TouchableOpacity>

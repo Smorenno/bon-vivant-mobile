@@ -9,6 +9,7 @@ import FeatureRow from '@/components/ui/FeatureRow';
 import { t } from '@/constants/i18n';
 import { Colors } from '@/constants/colors';
 import { storage } from '@/services/storage';
+import { useAuthStore } from '@/stores/authStore';
 
 const CITY_COLORS: Record<string, string> = {
   barcelona: '#C8860A',
@@ -36,6 +37,7 @@ const CITY_COUNTRIES: Record<string, string> = {
 
 export default function Preview() {
   const router = useRouter();
+  const setGuest = useAuthStore((s) => s.setGuest);
   const [citySlug, setCitySlug] = useState<string>('barcelona');
 
   useEffect(() => {
@@ -100,7 +102,13 @@ export default function Preview() {
             variant="primary"
           />
           <Text style={styles.saveText}>{t('onboarding.preview.saveProgress')}</Text>
-          <TouchableOpacity onPress={() => router.replace('/(app)')}>
+          <TouchableOpacity
+            onPress={async () => {
+              await storage.setGuestMode();
+              setGuest(true);
+              router.replace('/(app)');
+            }}
+          >
             <Text style={styles.skipText}>{t('onboarding.preview.skip')}</Text>
           </TouchableOpacity>
         </View>

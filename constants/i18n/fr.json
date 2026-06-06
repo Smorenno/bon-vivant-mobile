@@ -65,20 +65,34 @@
   "auth": {
     "login": {
       "title": "Bon retour",
-      "subtitle": "Connectez-vous pour accéder à vos guides.",
+      "subtitle": "Connectez-vous pour accéder à vos guides hors ligne et garder votre progression.",
       "emailPlaceholder": "Adresse e-mail",
       "passwordPlaceholder": "Mot de passe",
       "cta": "Se connecter",
-      "noAccount": "Vous n'avez pas de compte ?",
-      "register": "S'inscrire",
-      "forgotPassword": "Mot de passe oublié ?"
+      "forgotPassword": "J'ai oublié mon mot de passe",
+      "resetPassword": "Réinitialiser le mot de passe",
+      "createAccount": "Créer un compte",
+      "skip": "Passer pour l'instant — j'explorerai d'abord"
     },
     "forgotPassword": {
-      "title": "Réinitialiser votre mot de passe",
-      "subtitle": "Entrez votre email et nous vous enverrons un lien de réinitialisation.",
+      "title": "Réinitialisation du mot de passe",
+      "subtitle": "Vous recevrez un code en cliquant sur envoyer le code. Vérifiez votre boîte de réception et les spams. Cela peut prendre quelques secondes.",
       "emailPlaceholder": "Adresse e-mail",
-      "cta": "Envoyer le lien",
-      "backToLogin": "Retour à la connexion"
+      "sendCode": "Envoyer le code",
+      "resendCode": "Renvoyer le code",
+      "didNotReceive": "Je n'ai pas reçu mon code"
+    },
+    "newPassword": {
+      "title": "Nouveau mot de passe",
+      "subtitle": "Après avoir réinitialisé votre mot de passe, vous aurez accès à vos guides hors ligne.",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "cta": "Réinitialiser le mot de passe"
+    },
+    "passwordSuccess": {
+      "title": "Tout est prêt !",
+      "subtitle": "Votre nouveau mot de passe est défini.",
+      "redirecting": "Vous ramener à l'accueil..."
     },
     "errors": {
       "invalidEmail": "Veuillez entrer une adresse email valide.",
@@ -90,7 +104,11 @@
       "resetSent": "Si un compte existe pour cet email, vous recevrez un lien de réinitialisation.",
       "rateLimit": "Trop de tentatives. Veuillez patienter un moment.",
       "network": "Erreur de connexion. Vérifiez votre internet et réessayez.",
-      "generic": "Quelque chose s'est mal passé. Veuillez réessayer."
+      "generic": "Quelque chose s'est mal passé. Veuillez réessayer.",
+      "invalidCode": "Code invalide ou expiré. Veuillez réessayer.",
+      "passwordsDoNotMatch": "Les mots de passe ne correspondent pas.",
+      "tooManyAttempts": "Trop de tentatives. Veuillez réessayer plus tard.",
+      "codeSent": "Code envoyé. Vérifiez votre boîte de réception et les spams."
     }
   },
   "common": {
@@ -98,5 +116,47 @@
     "loading": "Chargement...",
     "error": "Quelque chose s'est mal passé. Veuillez réessayer.",
     "retry": "Réessayer"
+  },
+  "home": {
+    "welcomeBack": "Bon retour",
+    "nextCruise": "Prochaine croisière",
+    "addCruiseDate": "Ajouter une date de croisière",
+    "daysLeft": "{days} jours",
+    "verifyEmail": "Vérifiez votre e-mail",
+    "verifyEmailSub": "Appuyez sur le lien que nous avons envoyé pour déverrouiller le mode hors ligne",
+    "resend": "Renvoyer",
+    "myGuides": "Mes Guides",
+    "cityUnlocked": "{count} ville débloquée",
+    "addDestination": "Ajouter une destination",
+    "fromPrice": "À partir de $9.99",
+    "guidesBadge": "{count} guide",
+    "itinerariesBadge": "{count} itinéraires",
+    "nextPort": "Prochain port",
+    "planCruise": "Planifiez votre prochaine croisière",
+    "planCruiseSub": "Ajoutez vos dates de croisière et vos ports pour obtenir des conseils personnalisés pour chaque escale.",
+    "setupCruise": "Configurer ma croisière",
+    "openGuide": "Ouvrir le guide",
+    "viewItinerary": "Voir l'itinéraire",
+    "discover": "Découvrir",
+    "discoverSub": "Sélectionné par Bon Vivant • 50+ Destinations",
+    "filterAll": "Tout",
+    "filterRoute": "Sur votre route",
+    "filterMed": "Méditerranée",
+    "filterCaribbean": "Caraïbes",
+    "bonVivantTips": "Conseils Bon Vivant",
+    "bonVivantTipsSub": "20 ans d'expertise croisière, distillés",
+    "cruisePack": "Votre croisière a {count} ports ?",
+    "cruisePackSub": "Obtenez toutes les destinations en un seul pack",
+    "cruisePackCta": "Voir le Pack Croisière • $24.99",
+    "bonVivantAttr": "— Bon Vivant",
+    "guestBanner": "Vous naviguez en tant qu'invité",
+    "guestBannerSub": "Sauvegardez votre guide et accédez-y hors ligne.",
+    "guestBannerCta": "S'inscrire gratuitement"
+  },
+  "guest": {
+    "lockedTitle": "Créez un compte gratuit",
+    "lockedSub": "Inscrivez-vous pour débloquer cette fonctionnalité.",
+    "cta": "Créer un compte",
+    "maybeLater": "Peut-être plus tard"
   }
 }

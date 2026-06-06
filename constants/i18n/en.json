@@ -65,20 +65,34 @@
   "auth": {
     "login": {
       "title": "Welcome back",
-      "subtitle": "Sign in to access your guides.",
+      "subtitle": "Log in to access your guides offline and keep your progress.",
       "emailPlaceholder": "Email address",
       "passwordPlaceholder": "Password",
       "cta": "Log in",
-      "noAccount": "Don't have an account?",
-      "register": "Sign up",
-      "forgotPassword": "Forgot password?"
+      "forgotPassword": "I forgot my password",
+      "resetPassword": "Reset Password",
+      "createAccount": "Create an account",
+      "skip": "Skip for now — I'll explore first"
     },
     "forgotPassword": {
-      "title": "Reset your password",
-      "subtitle": "Enter your email and we'll send you a reset link.",
+      "title": "Password reset",
+      "subtitle": "You will receive a code when clicking send code, check your inbox and spam. It may take a few seconds.",
       "emailPlaceholder": "Email address",
-      "cta": "Send reset link",
-      "backToLogin": "Back to login"
+      "sendCode": "Send code",
+      "resendCode": "Resend code",
+      "didNotReceive": "I did not receive my code"
+    },
+    "newPassword": {
+      "title": "New password",
+      "subtitle": "After resetting your new password you will get access to your guides offline.",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "cta": "Reset password"
+    },
+    "passwordSuccess": {
+      "title": "You're all set!",
+      "subtitle": "Your new password is set.",
+      "redirecting": "Taking you home..."
     },
     "errors": {
       "invalidEmail": "Please enter a valid email address.",
@@ -90,7 +104,11 @@
       "resetSent": "If an account exists for this email, you'll receive a reset link.",
       "rateLimit": "Too many attempts. Please wait a moment and try again.",
       "network": "Connection error. Please check your internet and try again.",
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "invalidCode": "Invalid or expired code. Please try again.",
+      "passwordsDoNotMatch": "Passwords do not match.",
+      "tooManyAttempts": "Too many attempts. Please try again later.",
+      "codeSent": "Code sent. Check your inbox and spam."
     }
   },
   "common": {
@@ -98,5 +116,47 @@
     "loading": "Loading...",
     "error": "Something went wrong. Please try again.",
     "retry": "Retry"
+  },
+  "home": {
+    "welcomeBack": "Welcome back",
+    "nextCruise": "Next cruise",
+    "addCruiseDate": "Add cruise date",
+    "daysLeft": "{days} days",
+    "verifyEmail": "Verify your email",
+    "verifyEmailSub": "Tap the link we sent to unlock offline mode",
+    "resend": "Resend",
+    "myGuides": "My Guides",
+    "cityUnlocked": "{count} city unlocked",
+    "addDestination": "Add destination",
+    "fromPrice": "From $9.99",
+    "guidesBadge": "{count} guide",
+    "itinerariesBadge": "{count} itineraries",
+    "nextPort": "Next port",
+    "planCruise": "Plan your next cruise",
+    "planCruiseSub": "Add your cruise dates and ports to get personalized tips for each stop.",
+    "setupCruise": "Set up my cruise",
+    "openGuide": "Open guide",
+    "viewItinerary": "View itinerary",
+    "discover": "Discover",
+    "discoverSub": "Curated by Bon Vivant • 50+ Destinations",
+    "filterAll": "All",
+    "filterRoute": "On your route",
+    "filterMed": "Mediterranean",
+    "filterCaribbean": "Caribbean",
+    "bonVivantTips": "Bon Vivant Tips",
+    "bonVivantTipsSub": "20 years of cruise expertise, distilled",
+    "cruisePack": "Your cruise has {count} ports?",
+    "cruisePackSub": "Get all destinations in one pack",
+    "cruisePackCta": "View Cruise Pack • $24.99",
+    "bonVivantAttr": "— Bon Vivant",
+    "guestBanner": "You're browsing as a guest",
+    "guestBannerSub": "Save your guide and access it offline.",
+    "guestBannerCta": "Sign up free"
+  },
+  "guest": {
+    "lockedTitle": "Create a free account",
+    "lockedSub": "Sign up to unlock this feature.",
+    "cta": "Create account",
+    "maybeLater": "Maybe later"
   }
 }

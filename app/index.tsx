@@ -8,17 +8,15 @@ export default function Index() {
 
   useEffect(() => {
     async function init() {
-      const [seen, { data }] = await Promise.all([
-        storage.getOnboardingSeen(),
-        supabase.auth.getSession(),
-      ]);
+      const seen = await storage.getOnboardingSeen();
+      const { data: { session } } = await supabase.auth.getSession();
 
       if (!seen) {
         router.replace('/(onboarding)/splash');
-      } else if (data.session) {
+      } else if (seen && session) {
         router.replace('/(app)');
       } else {
-        router.replace('/(app)');
+        router.replace('/(auth)/login');
       }
     }
     init();
