@@ -8,16 +8,22 @@ export default function Index() {
 
   useEffect(() => {
     async function init() {
-      const seen = await storage.getOnboardingSeen();
       const { data: { session } } = await supabase.auth.getSession();
 
+      // Registered users always skip onboarding, even after reinstall
+      if (session) {
+        router.replace('/(app)');
+        return;
+      }
+
+      const seen = await storage.getOnboardingSeen();
       if (!seen) {
         router.replace('/(onboarding)/splash');
-      } else if (seen && session) {
-        router.replace('/(app)');
-      } else {
-        router.replace('/(auth)/login');
+        return;
       }
+
+      const isGuest = await storage.getGuestMode();
+      router.replace(isGuest ? '/(app)' : '/(auth)/login');
     }
     init();
   }, []);

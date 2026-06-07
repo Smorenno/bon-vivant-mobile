@@ -15,4 +15,7 @@ export const storage = {
   },
   clearGuestMode: () => AsyncStorage.removeItem('is_guest'),
   clear: () => AsyncStorage.clear(),
+  // DEV ONLY — borrar antes de release (solo lo usa el botón de reset en profile.tsx)
+  resetOnboarding: () =>
+    AsyncStorage.multiRemove(['has_seen_onboarding', 'is_guest', 'selected_free_city']),
 };

@@ -1,11 +1,13 @@
 {
   "permissions": {
     "allow": [
+      "Bash(npx expo start:*)",
+      "Bash(npm run:*)",
       "Bash(pkill -f \"expo start\")",
       "Bash(pkill -f \"metro\")",
       "Bash(watchman watch-del *)",
       "Bash(watchman watch *)"
     ]
   },
-  "systemPrompt": "Always read STANDARDS.md before writing any code."
+  "systemPrompt": "Lee .claude/standards.md antes de escribir cualquier código.",
 }

@@ -27,12 +27,13 @@ export default function RootLayout() {
       (event, newSession) => {
         if (event === 'SIGNED_OUT') {
           setSession(null);
-          router.replace('/(onboarding)/splash');
+          // Onboarding already seen — go to login, not splash
+          router.replace('/(auth)/login');
           return;
         }
-        if (event === 'TOKEN_REFRESHED') {
-          setSession(newSession);
-          return;
+        if (event === 'SIGNED_IN' && newSession) {
+          // OAuth or any sign-in clears guest mode
+          storage.clearGuestMode().then(() => setGuest(false));
         }
         setSession(newSession);
       }
@@ -48,7 +49,7 @@ export default function RootLayout() {
 
     // Guests are allowed into /(app) without a session
     if (!session && !isGuest && inApp) {
-      router.replace('/(onboarding)/splash');
+      router.replace('/(auth)/login');
       return;
     }
     if (session && (inAuth || inOnboarding)) {
