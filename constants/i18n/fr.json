@@ -24,9 +24,13 @@
     },
     "pickCity": {
       "label": "Votre premier guide",
-      "title": "Choisissez une ville, c'est offert.",
-      "subtitle": "Guide complet, cartes hors ligne, tous mes conseils complètement gratuits.",
-      "freeBadge": "Gratuit"
+      "titleBold": "Choisissez une ville",
+      "titleLight": ", c'est offert.",
+      "subtitle": "Guide complet, cartes hors ligne,\ntous mes conseils complètement gratuits.",
+      "freeBadge": "Gratuit",
+      "spots": "{{count}} lieux",
+      "itineraries": "{{count}} itinéraires",
+      "hint": "Appuyez sur une ville pour ouvrir votre guide gratuit"
     },
     "preview": {
       "sectionTitle": "Ce qu'il y a dans votre guide",

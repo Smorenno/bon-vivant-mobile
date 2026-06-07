@@ -24,9 +24,13 @@
     },
     "pickCity": {
       "label": "Your first guide",
-      "title": "Choose a city, it's on me.",
-      "subtitle": "Full guide, offline maps, all my tips completely free.",
-      "freeBadge": "Free"
+      "titleBold": "Choose a city",
+      "titleLight": ", it's on me.",
+      "subtitle": "Full guide, offline maps,\nall my tips completely free.",
+      "freeBadge": "Free",
+      "spots": "{{count}} spots",
+      "itineraries": "{{count}} itineraries",
+      "hint": "Tap a city to open your free guide instantly"
     },
     "preview": {
       "sectionTitle": "What's inside your guide",

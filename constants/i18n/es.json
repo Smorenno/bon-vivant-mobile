@@ -24,9 +24,13 @@
     },
     "pickCity": {
       "label": "Tu primera guía",
-      "title": "Elige una ciudad, es mi regalo.",
-      "subtitle": "Guía completa, mapas offline, todos mis consejos completamente gratis.",
-      "freeBadge": "Gratis"
+      "titleBold": "Elige una ciudad",
+      "titleLight": ", es mi regalo.",
+      "subtitle": "Guía completa, mapas offline,\ntodos mis consejos completamente gratis.",
+      "freeBadge": "Gratis",
+      "spots": "{{count}} lugares",
+      "itineraries": "{{count}} itinerarios",
+      "hint": "Toca una ciudad para abrir tu guía gratis"
     },
     "preview": {
       "sectionTitle": "Qué hay en tu guía",
