@@ -7,6 +7,7 @@ import Button from '@/components/ui/Button';
 import PaginationDots from '@/components/ui/PaginationDots';
 import { t } from '@/constants/i18n';
 import { Colors } from '@/constants/colors';
+import { Spacing } from '@/constants/spacing';
 import { storage } from '@/services/storage';
 
 const CITY_NAMES: Record<string, string> = {
@@ -30,16 +31,21 @@ export default function Success() {
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <View style={styles.container}>
-        <View style={styles.check}>
-          <Feather name="check" size={36} color="#FFFFFF" />
+        <View style={styles.checkCircle}>
+          <Feather name="check" size={38} color={Colors.white} />
         </View>
+
         <Text style={styles.title}>{t('onboarding.success.title')}</Text>
+
+        {/* Subtitle rendered in blueAccent per design */}
         <Text style={styles.subtitle}>
           {t('onboarding.success.subtitle', { city: cityName })}
         </Text>
-        <View style={styles.dots}>
-          <PaginationDots total={4} current={3} />
+
+        <View style={styles.dotsRow}>
+          <PaginationDots total={3} current={2} />
         </View>
+
         <Button
           label={t('onboarding.success.done')}
           onPress={() => router.replace('/(app)')}
@@ -54,41 +60,40 @@ export default function Success() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bgCard,
   },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: Spacing.screenHorizontal,
+    gap: Spacing.lg,
   },
-  check: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: Colors.primary,
+  checkCircle: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    backgroundColor: Colors.navy,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: Colors.text,
-    marginTop: 24,
+    color: Colors.textPrimary,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: Colors.textSecondary,
-    marginTop: 8,
+    color: Colors.blueAccent,
     textAlign: 'center',
     lineHeight: 24,
   },
-  dots: {
-    marginTop: 32,
+  dotsRow: {
+    marginTop: Spacing.md,
   },
   button: {
-    marginTop: 32,
+    marginTop: Spacing.md,
     width: '100%',
   },
 });

@@ -17,8 +17,8 @@ export default function Splash() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.logo}>
-        <Feather name="eye" size={36} color={Colors.primary} />
+      <View style={styles.logoBlock}>
+        <Feather name="eye" size={40} color={Colors.navy} />
         <Text style={styles.brand}>BON VIVANT</Text>
       </View>
       <Text style={styles.tagline}>{t('onboarding.splash.tagline')}</Text>
@@ -29,23 +29,24 @@ export default function Splash() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bgCard,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 12,
   },
-  logo: {
+  logoBlock: {
     alignItems: 'center',
+    gap: 10,
   },
   brand: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: Colors.primary,
-    letterSpacing: 2,
-    marginTop: 10,
+    fontSize: 28,
+    fontWeight: '800',
+    color: Colors.navy,
+    letterSpacing: 3,
   },
   tagline: {
-    fontSize: 16,
+    fontSize: 15,
     color: Colors.textSecondary,
-    marginTop: 16,
+    letterSpacing: 0.3,
   },
 });

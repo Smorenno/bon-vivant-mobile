@@ -6,6 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import CityImage from '@/components/ui/CityImage';
 import { t } from '@/constants/i18n';
 import { Colors } from '@/constants/colors';
+import { Spacing, Radius } from '@/constants/spacing';
 import { storage } from '@/services/storage';
 
 const CITIES = [
@@ -20,7 +21,7 @@ const CITIES = [
     slug: 'yokohama',
     name: 'Yokohama',
     country: 'Japan · Pacific',
-    quote: "If there is something I would eat there are the matcha from Motomachi's corners.",
+    quote: "If there is something I would eat there, it's the matcha from Motomachi's corners.",
     placeholderColor: '#1D9E75',
   },
   {
@@ -45,14 +46,18 @@ export default function PickCity() {
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.back} onPress={() => router.back()}>
-          <Feather name="arrow-left" size={24} color={Colors.primary} />
+          <Feather name="chevron-left" size={22} color={Colors.white} />
         </TouchableOpacity>
 
         <Text style={styles.label}>{t('onboarding.pickCity.label')}</Text>
         <Text style={styles.title}>{t('onboarding.pickCity.title')}</Text>
         <Text style={styles.subtitle}>{t('onboarding.pickCity.subtitle')}</Text>
 
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.scroll}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+        >
           {CITIES.map((city) => (
             <TouchableOpacity
               key={city.slug}
@@ -61,13 +66,12 @@ export default function PickCity() {
               activeOpacity={0.85}
             >
               <View style={styles.imageWrap}>
-                <CityImage
-                  placeholderColor={city.placeholderColor}
-                  style={styles.cityImage}
-                />
+                <CityImage placeholderColor={city.placeholderColor} style={styles.cityImage} />
               </View>
               <View style={styles.info}>
-                <Text style={styles.cityName}>{city.name}</Text>
+                <View style={styles.topRow}>
+                  <Text style={styles.cityName}>{city.name}</Text>
+                </View>
                 <Text style={styles.country}>{city.country}</Text>
                 <Text style={styles.quote} numberOfLines={2}>
                   {city.quote}
@@ -79,6 +83,8 @@ export default function PickCity() {
             </TouchableOpacity>
           ))}
         </ScrollView>
+
+        <Text style={styles.hint}>Tap a city to open your free guide instantly</Text>
       </View>
     </SafeAreaView>
   );
@@ -87,50 +93,59 @@ export default function PickCity() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.bgCard,
   },
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 16,
+    paddingHorizontal: Spacing.screenHorizontal,
+    paddingTop: Spacing.lg,
   },
   back: {
-    marginBottom: 24,
-    alignSelf: 'flex-start',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.navy,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.xl,
   },
   label: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.teal,
-    letterSpacing: 1,
-    marginBottom: 8,
+    color: Colors.blueAccent,
+    letterSpacing: 0.8,
+    marginBottom: Spacing.sm,
     textTransform: 'uppercase',
   },
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: Colors.text,
-    marginBottom: 10,
+    color: Colors.textPrimary,
+    lineHeight: 33,
+    marginBottom: Spacing.sm,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 14,
     color: Colors.textSecondary,
-    lineHeight: 22,
-    marginBottom: 24,
+    lineHeight: 21,
+    marginBottom: Spacing.xl,
   },
   scroll: {
     flex: 1,
   },
+  scrollContent: {
+    paddingBottom: Spacing.sm,
+  },
   card: {
-    borderRadius: 16,
+    borderRadius: Radius.md,
     overflow: 'hidden',
-    marginBottom: 12,
-    height: 110,
+    marginBottom: Spacing.sm,
+    height: 112,
     flexDirection: 'row',
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.bgPrimary,
   },
   imageWrap: {
-    width: '35%',
+    width: 100,
     height: '100%',
   },
   cityImage: {
@@ -139,37 +154,48 @@ const styles = StyleSheet.create({
   },
   info: {
     flex: 1,
-    padding: 14,
+    paddingHorizontal: Spacing.cardPadding,
+    paddingVertical: Spacing.cardPadding,
     justifyContent: 'center',
+    gap: 2,
+  },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   cityName: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text,
-    marginBottom: 2,
+    color: Colors.textPrimary,
   },
   country: {
-    fontSize: 12,
+    fontSize: 11,
     color: Colors.textSecondary,
-    marginBottom: 4,
   },
   quote: {
-    fontSize: 12,
+    fontSize: 11,
     fontStyle: 'italic',
     color: Colors.textSecondary,
-    lineHeight: 16,
-    marginBottom: 6,
+    lineHeight: 15,
   },
   badge: {
     alignSelf: 'flex-start',
-    backgroundColor: Colors.tealLight,
-    borderRadius: 20,
-    paddingHorizontal: 8,
+    backgroundColor: Colors.badgeGreenBg,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.sm + 2,
     paddingVertical: 3,
+    marginTop: 2,
   },
   badgeText: {
     fontSize: 11,
-    color: Colors.tealDark,
+    color: Colors.badgeGreenText,
     fontWeight: '600',
+  },
+  hint: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    paddingVertical: Spacing.lg,
   },
 });

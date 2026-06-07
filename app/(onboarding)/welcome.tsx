@@ -7,46 +7,53 @@ import CityImage from '@/components/ui/CityImage';
 import Button from '@/components/ui/Button';
 import PaginationDots from '@/components/ui/PaginationDots';
 import { t } from '@/constants/i18n';
+import { Colors } from '@/constants/colors';
+import { Spacing } from '@/constants/spacing';
 
 export default function Welcome() {
   const router = useRouter();
 
   return (
     <View style={styles.root}>
-      <CityImage placeholderColor="#1a2744" style={StyleSheet.absoluteFillObject} />
-      <View style={[StyleSheet.absoluteFillObject, styles.overlay]} />
-      <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-        <View style={styles.content}>
+      {/* Top: full-width photo with logo overlay */}
+      <View style={styles.imageContainer}>
+        <CityImage placeholderColor="#1a2744" style={StyleSheet.absoluteFillObject} />
+        <View style={styles.imageOverlay} />
+        <SafeAreaView edges={['top']} style={styles.logoSafe}>
           <View style={styles.logoRow}>
-            <Feather name="eye" size={28} color="#FFFFFF" />
+            <Feather name="eye" size={26} color={Colors.white} />
             <Text style={styles.brand}>BON VIVANT</Text>
           </View>
+        </SafeAreaView>
+      </View>
 
-          <View style={styles.middle}>
-            <Text style={styles.title}>{t('onboarding.welcome.title')}</Text>
-            <Text style={styles.subtitle}>{t('onboarding.welcome.subtitle')}</Text>
-            <View style={styles.spacer} />
-            <Text style={styles.bio}>{t('onboarding.welcome.bio')}</Text>
-            <Text style={styles.bio2}>{t('onboarding.welcome.bio2')}</Text>
+      {/* Bottom: white card with content */}
+      <View style={styles.card}>
+        <View style={styles.cardContent}>
+          <Text style={styles.title}>{t('onboarding.welcome.title')}</Text>
+          <Text style={styles.subtitle}>{t('onboarding.welcome.subtitle')}</Text>
+
+          <View style={styles.bioBlock}>
+            <Text style={styles.bio}>
+              {t('onboarding.welcome.bio')}
+            </Text>
+            <Text style={styles.bio2}>
+              {t('onboarding.welcome.bio2')}
+            </Text>
           </View>
 
-          <View style={styles.bottom}>
-            <Button
-              label={t('onboarding.welcome.cta')}
-              onPress={() => router.push('/(onboarding)/value-props')}
-              variant="light"
-            />
-            <View style={styles.dots}>
-              <PaginationDots
-                total={4}
-                current={0}
-                activeColor="#FFFFFF"
-                inactiveColor="rgba(255,255,255,0.4)"
-              />
-            </View>
+          <Button
+            label={t('onboarding.welcome.cta')}
+            onPress={() => router.push('/(onboarding)/value-props')}
+            variant="primary"
+          />
+
+          <View style={styles.dotsRow}>
+            <PaginationDots total={3} current={0} />
           </View>
         </View>
-      </SafeAreaView>
+        <SafeAreaView edges={['bottom']} />
+      </View>
     </View>
   );
 }
@@ -54,64 +61,69 @@ export default function Welcome() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#1a2744',
+    backgroundColor: Colors.navy,
   },
-  overlay: {
-    backgroundColor: 'rgba(0,0,0,0.45)',
-  },
-  safe: {
+  imageContainer: {
     flex: 1,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 16,
+  imageOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(27,30,60,0.35)',
+  },
+  logoSafe: {
+    paddingHorizontal: Spacing.screenHorizontal,
+    paddingTop: Spacing.sm,
   },
   logoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: Spacing.sm,
   },
   brand: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: Colors.white,
     letterSpacing: 2,
   },
-  middle: {
-    flex: 1,
-    justifyContent: 'center',
+  // White rounded card sliding up from the bottom
+  card: {
+    backgroundColor: Colors.bgCard,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingTop: Spacing.xxl,
+    paddingHorizontal: Spacing.screenHorizontal,
+  },
+  cardContent: {
+    gap: Spacing.lg,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 16,
+    color: Colors.textPrimary,
+    lineHeight: 32,
   },
   subtitle: {
     fontSize: 15,
-    color: 'rgba(255,255,255,0.8)',
+    color: Colors.textSecondary,
     lineHeight: 22,
+    marginTop: -Spacing.sm,
   },
-  spacer: {
-    height: 16,
+  bioBlock: {
+    gap: Spacing.sm,
+    marginTop: -Spacing.xs,
   },
   bio: {
-    fontSize: 15,
-    color: 'rgba(255,255,255,0.8)',
-    lineHeight: 22,
-    marginBottom: 8,
+    fontSize: 14,
+    color: Colors.textSecondary,
+    lineHeight: 21,
   },
   bio2: {
-    fontSize: 15,
-    color: 'rgba(255,255,255,0.7)',
-    lineHeight: 22,
+    fontSize: 14,
+    color: Colors.textSecondary,
+    lineHeight: 21,
   },
-  bottom: {
-    gap: 20,
-  },
-  dots: {
+  dotsRow: {
     alignItems: 'center',
+    paddingBottom: Spacing.lg,
   },
 });

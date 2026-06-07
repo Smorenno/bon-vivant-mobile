@@ -82,12 +82,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   primary: {
-    backgroundColor: '#111827',
+    backgroundColor: '#27273E',
   },
   secondary: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#111827',
+    borderColor: '#27273E',
   },
   ghost: {
     backgroundColor: 'transparent',
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   labelSecondary: {
-    color: '#111827',
+    color: '#27273E',
   },
   labelGhost: {
     color: '#6B7280',

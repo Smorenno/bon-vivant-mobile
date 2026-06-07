@@ -7,13 +7,19 @@ interface FeatureRowProps {
   icon: React.ComponentProps<typeof Feather>['name'];
   title: string;
   description: string;
+  iconBg?: string;
 }
 
-export default function FeatureRow({ icon, title, description }: FeatureRowProps) {
+export default function FeatureRow({
+  icon,
+  title,
+  description,
+  iconBg = Colors.blueAccent,
+}: FeatureRowProps) {
   return (
     <View style={styles.row}>
-      <View style={styles.iconWrap}>
-        <Feather name={icon} size={20} color="#FFFFFF" />
+      <View style={[styles.iconWrap, { backgroundColor: iconBg }]}>
+        <Feather name={icon} size={20} color={Colors.white} />
       </View>
       <View style={styles.text}>
         <Text style={styles.title}>{title}</Text>
@@ -33,7 +39,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: Colors.teal,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 14,
@@ -45,7 +50,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text,
+    color: Colors.textPrimary,
     marginBottom: 2,
   },
   description: {
