@@ -115,6 +115,10 @@
     "back": "Volver",
     "loading": "Cargando...",
     "error": "Algo salió mal. Por favor, inténtalo de nuevo.",
+    "errorNetwork": "Error de conexión. Comprueba tu internet e inténtalo de nuevo.",
+    "errorUnauthorized": "Sesión expirada. Por favor, inicia sesión de nuevo.",
+    "errorForbidden": "No tienes acceso a este contenido.",
+    "errorNotFound": "Contenido no encontrado.",
     "retry": "Reintentar"
   },
   "home": {
@@ -158,5 +162,60 @@
     "lockedSub": "Regístrate para desbloquear esta función.",
     "cta": "Crear cuenta",
     "maybeLater": "Quizás más tarde"
+  },
+  "guide": {
+    "itinerary": {
+      "fromPort": "a {{min}} min a pie del puerto",
+      "fromPrevious": "a {{min}} min del anterior",
+      "recommended": "Recomendado",
+      "timeOfDay": {
+        "morning": "Mañana",
+        "afternoon": "Tarde",
+        "fullDay": "Día completo"
+      }
+    },
+    "transport": {
+      "method": {
+        "walk": "A pie",
+        "metro": "Metro",
+        "bus": "Autobús",
+        "taxi": "Taxi",
+        "ferry": "Ferry",
+        "tram": "Tranvía",
+        "shuttle": "Lanzadera"
+      }
+    },
+    "spot": {
+      "category": {
+        "restaurant": "Restaurante",
+        "cafe": "Café",
+        "bar": "Bar"
+      },
+      "kind": {
+        "attraction": "Atracción",
+        "food": "Restauración"
+      }
+    },
+    "travelMode": {
+      "walk": "A pie",
+      "transit": "Transporte público",
+      "taxi": "Taxi"
+    }
+  },
+  "country": {
+    "AL": "Albania",
+    "BA": "Bosnia y Herzegovina",
+    "ES": "España",
+    "FR": "Francia",
+    "GR": "Grecia",
+    "HR": "Croacia",
+    "IT": "Italia",
+    "MC": "Mónaco",
+    "ME": "Montenegro",
+    "MK": "Macedonia del Norte",
+    "MT": "Malta",
+    "PT": "Portugal",
+    "SI": "Eslovenia",
+    "TR": "Turquía"
   }
 }

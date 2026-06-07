@@ -115,6 +115,10 @@
     "back": "Retour",
     "loading": "Chargement...",
     "error": "Quelque chose s'est mal passé. Veuillez réessayer.",
+    "errorNetwork": "Erreur de connexion. Vérifiez votre internet et réessayez.",
+    "errorUnauthorized": "Votre session a expiré. Veuillez vous reconnecter.",
+    "errorForbidden": "Vous n'avez pas accès à ce contenu.",
+    "errorNotFound": "Contenu introuvable.",
     "retry": "Réessayer"
   },
   "home": {
@@ -158,5 +162,60 @@
     "lockedSub": "Inscrivez-vous pour débloquer cette fonctionnalité.",
     "cta": "Créer un compte",
     "maybeLater": "Peut-être plus tard"
+  },
+  "guide": {
+    "itinerary": {
+      "fromPort": "à {{min}} min à pied du port",
+      "fromPrevious": "à {{min}} min de l'étape précédente",
+      "recommended": "Recommandé",
+      "timeOfDay": {
+        "morning": "Matin",
+        "afternoon": "Après-midi",
+        "fullDay": "Journée complète"
+      }
+    },
+    "transport": {
+      "method": {
+        "walk": "À pied",
+        "metro": "Métro",
+        "bus": "Bus",
+        "taxi": "Taxi",
+        "ferry": "Ferry",
+        "tram": "Tramway",
+        "shuttle": "Navette"
+      }
+    },
+    "spot": {
+      "category": {
+        "restaurant": "Restaurant",
+        "cafe": "Café",
+        "bar": "Bar"
+      },
+      "kind": {
+        "attraction": "Attraction",
+        "food": "Restauration"
+      }
+    },
+    "travelMode": {
+      "walk": "À pied",
+      "transit": "Transport en commun",
+      "taxi": "Taxi"
+    }
+  },
+  "country": {
+    "AL": "Albanie",
+    "BA": "Bosnie-Herzégovine",
+    "ES": "Espagne",
+    "FR": "France",
+    "GR": "Grèce",
+    "HR": "Croatie",
+    "IT": "Italie",
+    "MC": "Monaco",
+    "ME": "Monténégro",
+    "MK": "Macédoine du Nord",
+    "MT": "Malte",
+    "PT": "Portugal",
+    "SI": "Slovénie",
+    "TR": "Turquie"
   }
 }

@@ -115,6 +115,10 @@
     "back": "Back",
     "loading": "Loading...",
     "error": "Something went wrong. Please try again.",
+    "errorNetwork": "Connection error. Please check your internet and try again.",
+    "errorUnauthorized": "Your session has expired. Please log in again.",
+    "errorForbidden": "You don't have access to this content.",
+    "errorNotFound": "Content not found.",
     "retry": "Retry"
   },
   "home": {
@@ -158,5 +162,60 @@
     "lockedSub": "Sign up to unlock this feature.",
     "cta": "Create account",
     "maybeLater": "Maybe later"
+  },
+  "guide": {
+    "itinerary": {
+      "fromPort": "{{min}} min walk from port",
+      "fromPrevious": "{{min}} min from previous stop",
+      "recommended": "Recommended",
+      "timeOfDay": {
+        "morning": "Morning",
+        "afternoon": "Afternoon",
+        "fullDay": "Full day"
+      }
+    },
+    "transport": {
+      "method": {
+        "walk": "Walk",
+        "metro": "Metro",
+        "bus": "Bus",
+        "taxi": "Taxi",
+        "ferry": "Ferry",
+        "tram": "Tram",
+        "shuttle": "Shuttle"
+      }
+    },
+    "spot": {
+      "category": {
+        "restaurant": "Restaurant",
+        "cafe": "Café",
+        "bar": "Bar"
+      },
+      "kind": {
+        "attraction": "Attraction",
+        "food": "Food & Drink"
+      }
+    },
+    "travelMode": {
+      "walk": "Walking",
+      "transit": "Public transport",
+      "taxi": "Taxi"
+    }
+  },
+  "country": {
+    "AL": "Albania",
+    "BA": "Bosnia and Herzegovina",
+    "ES": "Spain",
+    "FR": "France",
+    "GR": "Greece",
+    "HR": "Croatia",
+    "IT": "Italy",
+    "MC": "Monaco",
+    "ME": "Montenegro",
+    "MK": "North Macedonia",
+    "MT": "Malta",
+    "PT": "Portugal",
+    "SI": "Slovenia",
+    "TR": "Turkey"
   }
 }
