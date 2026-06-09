@@ -1,30 +1,48 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/colors';
-import { Spacing, Radius } from '@/constants/spacing';
+import { Spacing } from '@/constants/spacing';
 import { Typography } from '@/constants/typography';
 import type { Tip } from '@/types/guide';
 
 type Props = {
-  tips: Tip[]; // pre-sorted by rankOrder
+  tips: Tip[];    // pre-sorted by rankOrder
+  cityName: string;
 };
 
-export default function TipsContent({ tips }: Props) {
+function TipRow({ tip }: { tip: Tip }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <View>
+      <View style={styles.separator} />
+      <TouchableOpacity
+        style={styles.row}
+        onPress={() => setOpen((v) => !v)}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.title}>{tip.title}</Text>
+        <Text style={styles.icon}>{open ? '−' : '+'}</Text>
+      </TouchableOpacity>
+      {open && (
+        <Text style={styles.body}>{tip.body}</Text>
+      )}
+    </View>
+  );
+}
+
+export default function TipsContent({ tips, cityName }: Props) {
   return (
     <>
-      <Text style={styles.heading}>Bon Vivant{'\n'}Tips</Text>
+      <Text style={styles.heading}>Bon vivant{'\n'}tips</Text>
+      <Text style={styles.subtitle}>Insider knowledge unique to {cityName}</Text>
 
-      {tips.map((tip, index) => (
-        <View key={tip.id} style={styles.card}>
-          <View style={styles.numberBadge}>
-            <Text style={styles.numberText}>{index + 1}</Text>
-          </View>
-          <View style={styles.textWrap}>
-            <Text style={styles.title}>{tip.title}</Text>
-            <Text style={styles.body}>{tip.body}</Text>
-          </View>
-        </View>
-      ))}
+      <View style={styles.list}>
+        {tips.map((tip) => (
+          <TipRow key={tip.id} tip={tip} />
+        ))}
+        <View style={styles.separator} />
+      </View>
     </>
   );
 }
@@ -32,44 +50,47 @@ export default function TipsContent({ tips }: Props) {
 const styles = StyleSheet.create({
   heading: {
     ...Typography.guideOverviewHeading,
-    color: Colors.textPrimary,
-    marginBottom: Spacing.lg,
+    color: Colors.white,
+    lineHeight: 38,
+    marginBottom: Spacing.xs,
   },
-  card: {
+  subtitle: {
+    ...Typography.guideBody,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xl,
+  },
+  list: {
+    marginTop: Spacing.md,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    marginVertical: Spacing.sm,
+  },
+  row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    paddingVertical: Spacing.md,
     gap: Spacing.md,
-    backgroundColor: Colors.bgPrimary,
-    borderRadius: Radius.md + 4,
-    padding: Spacing.xl,
-    marginBottom: Spacing.md,
-  },
-  numberBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: Colors.navy,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-    marginTop: 2,
-  },
-  numberText: {
-    ...Typography.guideSmall,
-    color: Colors.white,
-    fontWeight: '700',
-  },
-  textWrap: {
-    flex: 1,
-    gap: Spacing.sm,
   },
   title: {
     ...Typography.guideSubHeading,
-    color: Colors.textPrimary,
+    color: Colors.white,
+    flex: 1,
+    lineHeight: 26,
+  },
+  icon: {
+    fontSize: 24,
+    color: Colors.white,
+    lineHeight: 30,
+    fontWeight: '300',
+    marginTop: 2,
   },
   body: {
     ...Typography.guideBody,
-    color: Colors.textPrimary,
+    color: 'rgba(255,255,255,0.7)',
     lineHeight: 22,
+    paddingBottom: Spacing.lg,
   },
 });

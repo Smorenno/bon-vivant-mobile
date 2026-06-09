@@ -19,12 +19,14 @@ import GourmetContent from '@/components/city/GourmetContent';
 import TipsContent from '@/components/city/TipsContent';
 import WhatToKnowContent from '@/components/city/WhatToKnowContent';
 import ItinerariesContent from '@/components/city/ItinerariesContent';
+import ItineraryDetail from '@/components/city/ItineraryDetail';
 import { Colors } from '@/constants/colors';
 import { Spacing, Radius } from '@/constants/spacing';
 import { Typography } from '@/constants/typography';
-import type { CityGuide, TransportMethod } from '@/types/guide';
-// DEV ONLY: resolved mock in Spanish — replace with API store when services are wired
+import type { CityGuide, Itinerary, TransportMethod } from '@/types/guide';
+// DEV ONLY: resolved mocks in Spanish — replace with API store when services are wired
 import yokohamaMock from '@/mocks/yokohama.guide.json';
+import barcelonaMock from '@/mocks/barcelona.guide.json';
 import { MOCK_GUIDES } from '@/services/mock/cities';
 import { resolveGuide } from '@/services/i18n/resolveGuide';
 import type { Locale } from '@/types/i18n';
@@ -33,7 +35,6 @@ import type { Locale } from '@/types/i18n';
 
 const LOCALE: Locale = 'en'; // TODO: wire to user locale store
 
-// Placeholder colors — DEV ONLY, removed on real API integration
 const CITY_PLACEHOLDER: Record<string, string> = {
   yokohama: '#2C6E6A',
   barcelona: '#C8860A',
@@ -50,8 +51,15 @@ const SPOT_COLORS: Record<string, string> = {
   'yk-s1': '#1A2B5E',
   'yk-s2': '#8B1A1A',
   'yk-s3': '#1A3A5E',
-  'bcn-s1': '#8B4513',
-  'bcn-s2': '#4A4A6A',
+  'yk-f1': '#2C3E6B',
+  'yk-f2': '#3B1A1A',
+  'yk-f3': '#1A2B3C',
+  'bcn-s1': '#6B3A2A',
+  'bcn-s2': '#2A3A5E',
+  'bcn-s3': '#3A2A5E',
+  'bcn-f1': '#5E2A1A',
+  'bcn-f2': '#1A3A4A',
+  'bcn-f3': '#2A4A2A',
   'rio-s1': '#5A7A3A',
 };
 
@@ -70,8 +78,10 @@ const METHOD_LABEL: Record<TransportMethod, string> = {
   ferry: 'Shuttle / Ferry',
 };
 
-// Transport methods that get a dashed separator (long-distance)
 const INTERCITY_METHODS: TransportMethod[] = ['train', 'ferry'];
+
+// Tabs whose content needs a dark card background
+const DARK_TABS = new Set(['gourmet', 'tips', 'itineraries'] as const);
 
 // --- Tabs ---
 
@@ -88,9 +98,9 @@ const TABS = [
 type TabKey = (typeof TABS)[number]['key'];
 
 // --- Resolved mock map (DEV ONLY) ---
-// Slug → pre-resolved CityGuide (Spanish). Replace with API store when services ready.
 const DEV_GUIDES: Record<string, CityGuide> = {
   yokohama: yokohamaMock as unknown as CityGuide,
+  barcelona: barcelonaMock as unknown as CityGuide,
 };
 
 // --- Screen ---
@@ -99,12 +109,13 @@ export default function CityGuide() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [selectedItinerary, setSelectedItinerary] = useState<Itinerary | null>(null);
 
   const guide = useMemo<CityGuide>(() => {
     const preResolved = DEV_GUIDES[slug ?? ''];
     if (preResolved != null) return preResolved;
-    // Fallback for cities without a resolved mock yet
     const raw = MOCK_GUIDES[slug ?? ''] ?? MOCK_GUIDES.yokohama;
     return resolveGuide(raw, LOCALE);
   }, [slug]);
@@ -113,6 +124,16 @@ export default function CityGuide() {
   const placeholderColor = CITY_PLACEHOLDER[citySlug] ?? '#2C6E6A';
   const highlightColors = HIGHLIGHT_COLORS[citySlug] ?? [];
   const portImageColor = PORT_IMAGE_COLORS[citySlug] ?? '#8A9BB0';
+
+  const isDark = DARK_TABS.has(activeTab as 'gourmet' | 'tips' | 'itineraries');
+  const isDetailView = selectedItinerary != null;
+
+  function handleTabChange(tab: TabKey) {
+    setActiveTab(tab);
+    setSelectedItinerary(null);
+  }
+
+  // --- Memoized props ---
 
   const portData: PortData = useMemo(() => ({
     subtitle: 'Where, how to get to the city, distance & facilities',
@@ -154,26 +175,65 @@ export default function CityGuide() {
       })),
   }), [guide.spots]);
 
-  const gourmetSpots = useMemo(() =>
-    guide.spots
-      .filter((s) => s.kind === 'food')
-      .sort((a, b) => a.rankOrder - b.rankOrder),
+  const gourmetSpots = useMemo(
+    () => guide.spots.filter((s) => s.kind === 'food').sort((a, b) => a.rankOrder - b.rankOrder),
     [guide.spots],
   );
 
-  const sortedTips = useMemo(() =>
-    guide.tips.slice().sort((a, b) => a.rankOrder - b.rankOrder),
+  const sortedTips = useMemo(
+    () => guide.tips.slice().sort((a, b) => a.rankOrder - b.rankOrder),
     [guide.tips],
   );
 
-  const sortedItineraries = useMemo(() =>
-    guide.itineraries.slice().sort((a, b) => a.rankOrder - b.rankOrder),
+  const sortedItineraries = useMemo(
+    () => guide.itineraries.slice().sort((a, b) => a.rankOrder - b.rankOrder),
     [guide.itineraries],
   );
 
+  // --- Tab bar (shared between normal and detail views) ---
+  const tabBar = (
+    <View style={[styles.tabBar, { paddingBottom: insets.bottom }]}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.tabScroll}
+      >
+        {TABS.map((tab) => (
+          <TouchableOpacity
+            key={tab.key}
+            style={styles.tab}
+            onPress={() => handleTabChange(tab.key)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.tabLabel, activeTab === tab.key && styles.tabLabelActive]}>
+              {tab.label}
+            </Text>
+            {activeTab === tab.key && <View style={styles.tabUnderline} />}
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  );
+
+  // --- Itinerary detail view (replaces normal guide layout) ---
+  if (isDetailView) {
+    return (
+      <SafeAreaView style={styles.safe} edges={['top']}>
+        <View style={[styles.card, styles.cardDark]}>
+          <ItineraryDetail
+            itinerary={selectedItinerary}
+            onBack={() => setSelectedItinerary(null)}
+          />
+          {tabBar}
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // --- Normal guide view ---
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <View style={styles.card}>
+      <View style={[styles.card, isDark && styles.cardDark]}>
 
         <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 
@@ -182,7 +242,9 @@ export default function CityGuide() {
             <TouchableOpacity style={styles.back} onPress={() => router.back()}>
               <Feather name="chevron-left" size={20} color={Colors.white} />
             </TouchableOpacity>
-            <Text style={styles.cityName}>{guide.meta.name.toUpperCase()}</Text>
+            <Text style={[styles.cityName, isDark && styles.cityNameLight]}>
+              {guide.meta.name.toUpperCase()}
+            </Text>
           </View>
 
           {/* Hero image */}
@@ -190,10 +252,10 @@ export default function CityGuide() {
             <CityImage placeholderColor={placeholderColor} />
           </View>
 
-          {/* Content below hero */}
+          {/* Content */}
           <View style={styles.content}>
 
-            {/* Offline badge — always visible */}
+            {/* Offline badge */}
             <View style={styles.badgeRow}>
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>Offline ✓</Text>
@@ -204,14 +266,10 @@ export default function CityGuide() {
             {activeTab === 'overview' && (
               <>
                 <Text style={styles.overviewHeading}>Overview</Text>
-
                 <Text style={styles.subHeading}>City Introduction</Text>
                 {guide.meta.intro.split('\n\n').filter(Boolean).map((para, i) => (
-                  <Text key={i} style={[styles.body, i > 0 && styles.bodyGap]}>
-                    {para}
-                  </Text>
+                  <Text key={i} style={[styles.body, i > 0 && styles.bodyGap]}>{para}</Text>
                 ))}
-
                 <View style={styles.contextWrap}>
                   <ContextCard
                     title="Key Historical Context"
@@ -219,7 +277,6 @@ export default function CityGuide() {
                     placeholderColor={placeholderColor}
                   />
                 </View>
-
                 <Text style={styles.subHeading}>
                   Top {guide.highlights.length} Highlights
                 </Text>
@@ -236,7 +293,6 @@ export default function CityGuide() {
                     </View>
                   ))}
                 </View>
-
                 <View style={styles.disclaimer}>
                   <Text style={styles.disclaimerLabel}>Disclaimer</Text>
                   <Text style={styles.disclaimerBody}>
@@ -246,7 +302,6 @@ export default function CityGuide() {
                     Every effort will be made to incorporate such changes in a timely manner.
                   </Text>
                 </View>
-
                 <TouchableOpacity style={styles.helpBtn} activeOpacity={0.8}>
                   <Text style={styles.helpBtnText}>
                     Help us telling us if there is an unexpected change
@@ -266,11 +321,18 @@ export default function CityGuide() {
 
             {/* ---- ITINERARIES ---- */}
             {activeTab === 'itineraries' && (
-              <ItinerariesContent itineraries={sortedItineraries} />
+              <ItinerariesContent
+                itineraries={sortedItineraries}
+                onOpen={(it) => {
+                  setSelectedItinerary(it);
+                }}
+              />
             )}
 
             {/* ---- TIPS ---- */}
-            {activeTab === 'tips' && <TipsContent tips={sortedTips} />}
+            {activeTab === 'tips' && (
+              <TipsContent tips={sortedTips} cityName={guide.meta.name} />
+            )}
 
             {/* ---- WHAT TO KNOW ---- */}
             {activeTab === 'whatToKnow' && (
@@ -282,28 +344,7 @@ export default function CityGuide() {
 
         </ScrollView>
 
-        {/* Fixed tab bar — paddingBottom covers home indicator area */}
-        <View style={[styles.tabBar, { paddingBottom: insets.bottom }]}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.tabScroll}
-          >
-            {TABS.map((tab) => (
-              <TouchableOpacity
-                key={tab.key}
-                style={styles.tab}
-                onPress={() => setActiveTab(tab.key)}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.tabLabel, activeTab === tab.key && styles.tabLabelActive]}>
-                  {tab.label}
-                </Text>
-                {activeTab === tab.key && <View style={styles.tabUnderline} />}
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
+        {tabBar}
 
       </View>
     </SafeAreaView>
@@ -321,6 +362,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     overflow: 'hidden',
+  },
+  cardDark: {
+    backgroundColor: Colors.navy,
   },
   scroll: {
     flex: 1,
@@ -343,6 +387,9 @@ const styles = StyleSheet.create({
   cityName: {
     ...Typography.guideDisplayTitle,
     color: Colors.textPrimary,
+  },
+  cityNameLight: {
+    color: Colors.white,
   },
   // --- Hero ---
   heroWrap: {
@@ -386,11 +433,9 @@ const styles = StyleSheet.create({
   bodyGap: {
     marginTop: Spacing.md,
   },
-  // --- Context card ---
   contextWrap: {
     marginTop: Spacing.xl,
   },
-  // --- Highlights ---
   highlights: {
     gap: Spacing.xl,
     marginTop: Spacing.sm,
@@ -419,7 +464,6 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md,
     overflow: 'hidden',
   },
-  // --- Disclaimer ---
   disclaimer: {
     marginTop: Spacing.xxl,
     alignItems: 'center',

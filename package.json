@@ -12,6 +12,7 @@
     "axios": "^1.7.0",
     "expo": "~51.0.0",
     "expo-constants": "~16.0.2",
+    "expo-linear-gradient": "~13.0.2",
     "expo-linking": "~6.3.1",
     "expo-localization": "~15.0.3",
     "expo-router": "~3.5.24",

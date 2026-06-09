@@ -35,9 +35,9 @@ export default function AppLayout() {
       <Tabs.Screen
         name="saved"
         options={{
-          title: 'Saved',
+          title: 'Planner',
           tabBarIcon: ({ color, size }) => (
-            <Feather name="bookmark" size={size} color={color} />
+            <Feather name="calendar" size={size} color={color} />
           ),
         }}
       />
@@ -52,7 +52,7 @@ export default function AppLayout() {
       />
       <Tabs.Screen
         name="city/[slug]"
-        options={{ href: null }}
+        options={{ href: null, tabBarStyle: { display: 'none', height: 0 } }}
       />
     </Tabs>
   );

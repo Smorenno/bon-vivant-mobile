@@ -1,114 +1,513 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  FlatList,
+  Dimensions,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { useAuthStore } from '@/stores/authStore';
 import { storage } from '@/services/storage';
 import { supabase } from '@/services/supabase';
-import { t } from '@/constants/i18n';
 import { Colors } from '@/constants/colors';
+import { Spacing, Radius } from '@/constants/spacing';
+import { Typography, FontFamily } from '@/constants/typography';
 import CityImage from '@/components/ui/CityImage';
-import GuestGate from '@/components/ui/GuestGate';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// Exact gradient from Mathias design spec
+const GRADIENT_COLORS = ['#76A7FF', Colors.bgPrimary, 'rgba(242,242,247,0)'] as const;
+const GRADIENT_LOCS = [0, 0.9615, 1] as const;
 
-type BadgeVariant = 'On your route' | 'Popular' | "Bon vivant's choice" | 'New guide';
+const { width: SCREEN_W } = Dimensions.get('window');
+const CARD_H_PAD = Spacing.screenHorizontal;
 
-interface MockCity {
+// ─── Mock data (replace with API) ────────────────────────────────────────────
+
+interface GuideCard {
   slug: string;
   name: string;
   country: string;
-  region: string;
-  quote: string;
+  spotsCount: number;
+  itinerariesCount: number;
   placeholderColor: string;
-  badge: BadgeVariant;
+  progress?: number; // 0–1
 }
 
-interface MockTip {
-  id: string;
-  content: string;
-}
-
-interface FreeCityData {
+interface TrendingCard {
+  slug: string;
   name: string;
   country: string;
+  spotsCount: number;
+  itinerariesCount: number;
+  quote: string;
+  highlights: Array<{ text: string; locked: boolean }>;
   placeholderColor: string;
+  isNew: boolean;
 }
 
-// ─── Mock data ────────────────────────────────────────────────────────────────
+const MOCK_MY_GUIDES: GuideCard[] = [
+  {
+    slug: 'barcelona',
+    name: 'Barcelona',
+    country: 'Spain',
+    spotsCount: 6,
+    itinerariesCount: 4,
+    placeholderColor: '#C8860A',
+    progress: 0.35,
+  },
+];
 
-// TODO: connect to API — GET /cities
-const MOCK_CITIES: MockCity[] = [
-  {
-    slug: 'yokohama',
-    name: 'Yokohama',
-    country: 'Japan',
-    region: 'Pacific',
-    quote: "If there is something I would eat there are the matcha from Motomachi's corners.",
-    placeholderColor: '#1D9E75',
-    badge: 'On your route',
-  },
-  {
-    slug: 'singapore',
-    name: 'Singapore',
-    country: 'Singapore',
-    region: 'Asia',
-    quote: "If there is something I would eat there are the mocha from luffy's mom.",
-    placeholderColor: '#185FA5',
-    badge: 'Popular',
-  },
-  {
-    slug: 'santorini',
-    name: 'Santorini',
-    country: 'Greece',
-    region: 'Mediterranean',
-    quote: "If there is something I would eat there are the mocha from luffy's mom.",
-    placeholderColor: '#D85A30',
-    badge: "Bon vivant's choice",
-  },
+const MOCK_TRENDING: TrendingCard[] = [
   {
     slug: 'portofino',
     name: 'Portofino',
     country: 'Italy',
-    region: 'Mediterranean',
-    quote: "If there is something I would eat there are the mocha from luffy's mom.",
+    spotsCount: 9,
+    itinerariesCount: 3,
+    quote: "Portofino is a 5-hour masterpiece — if you know where to go. Most cruisers don't.",
+    highlights: [
+      { text: 'The cliffside trattoria with no sign outside', locked: false },
+      { text: 'The viewpoint only fishermen know about', locked: false },
+      { text: 'The one thing everyone does wrong at port', locked: true },
+    ],
     placeholderColor: '#534AB7',
-    badge: 'New guide',
+    isNew: true,
+  },
+  {
+    slug: 'dubrovnik',
+    name: 'Dubrovnik',
+    country: 'Croatia',
+    spotsCount: 7,
+    itinerariesCount: 3,
+    quote: "Inside the walls is a trap. Outside them is the real Dubrovnik — and almost nobody goes there.",
+    highlights: [
+      { text: 'The bar above the city that locals keep secret', locked: false },
+      { text: 'Three spots on the walls worth the climb', locked: false },
+      { text: 'The one beach the cruise maps never show', locked: true },
+    ],
+    placeholderColor: '#1A4A8A',
+    isNew: false,
   },
 ];
 
-// TODO: connect to API — GET /tips/general
-const MOCK_TIPS: MockTip[] = [
-  { id: '1', content: 'Always arrive at the port 30 min early. The best spots fill up fast.' },
-  { id: '2', content: "Skip the ship's excursions. Walk 10 min from port and save 40%." },
-  { id: '3', content: 'The best local restaurants never have menus in English. Good sign.' },
-];
-
-const CRUISE_PORT_COUNT = 7; // TODO: replace with actual port count from cruise data
-
-// TODO: replace with API call to GET /cities/:slug
-const FREE_CITY_DATA: Record<string, FreeCityData> = {
-  barcelona: { name: 'Barcelona', country: 'Spain', placeholderColor: '#C8860A' },
-  yokohama: { name: 'Yokohama', country: 'Japan', placeholderColor: '#1D9E75' },
-  rio: { name: 'Rio de Janeiro', country: 'Brazil', placeholderColor: '#D85A30' },
-  singapore: { name: 'Singapore', country: 'Singapore', placeholderColor: '#185FA5' },
-  santorini: { name: 'Santorini', country: 'Greece', placeholderColor: '#D85A30' },
-  portofino: { name: 'Portofino', country: 'Italy', placeholderColor: '#534AB7' },
+const MOCK_NEXT_STOP = {
+  slug: 'barcelona',
+  cityName: 'Barcelona, Spain',
+  dateLabel: 'Next stop · June 18',
+  quote: '"Skip La Rambla, the real Barcelona is in El Born. Start at Mercat de Santa Caterina instead."',
+  attribution: '— Bon Vivant',
 };
 
-const BADGE_COLORS: Record<BadgeVariant, { bg: string; text: string }> = {
-  'On your route': { bg: Colors.tealLight, text: Colors.tealDark },
-  'Popular': { bg: Colors.amberLight, text: Colors.amberText },
-  "Bon vivant's choice": { bg: Colors.purpleLight, text: Colors.purpleDark },
-  'New guide': { bg: Colors.blueLight, text: Colors.blueDark },
-};
+const CRUISE_PORT_COUNT = 7;
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function CruisePill({ label, value }: { label: string; value: string }) {
+  return (
+    <LinearGradient
+      colors={['#16162D', '#27273E']}
+      start={{ x: 0.5, y: 1 }}
+      end={{ x: 0.5, y: 0 }}
+      style={pill.wrap}
+    >
+      <Text style={pill.label}>{label}</Text>
+      <Text style={pill.days}>{value}</Text>
+    </LinearGradient>
+  );
+}
+
+const pill = StyleSheet.create({
+  wrap: {
+    width: 160,
+    height: 59,
+    borderRadius: 4,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    paddingLeft: 16,
+    marginRight: -CARD_H_PAD,
+  },
+  days: {
+    fontFamily: FontFamily.ui,
+    fontSize: 12,
+    lineHeight: 12,
+    fontWeight: '400',
+    color: Colors.blueLight,
+  },
+  label: {
+    fontFamily: FontFamily.ui,
+    fontSize: 16,
+    lineHeight: 16,
+    fontWeight: '700',
+    color: Colors.white,
+  },
+});
+
+function GuideCardItem({
+  card,
+  onPress,
+}: {
+  card: GuideCard;
+  onPress: () => void;
+}) {
+  return (
+    <TouchableOpacity style={gc.card} onPress={onPress} activeOpacity={0.85}>
+      <View style={gc.imgWrap}>
+        <CityImage placeholderColor={card.placeholderColor} />
+      </View>
+      <View style={gc.body}>
+        <Text style={gc.name}>{card.name}</Text>
+        <Text style={gc.meta}>
+          <Text style={gc.metaGray}>{card.country} · </Text>
+          <Text style={gc.metaAccent}>{card.spotsCount} spots</Text>
+          <Text style={gc.metaGray}> · </Text>
+          <Text style={gc.metaAccent}>{card.itinerariesCount} itineraries</Text>
+        </Text>
+      </View>
+      <View style={gc.progressTrack}>
+        <View style={[gc.progressFill, { width: `${Math.round((card.progress ?? 0) * 100)}%` }]} />
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+const gc = StyleSheet.create({
+  card: {
+    width: 210,
+    borderRadius: Radius.md + 4,
+    overflow: 'hidden',
+    backgroundColor: Colors.bgCard,
+    borderWidth: 1,
+    borderColor: Colors.borderFaint,
+  },
+  imgWrap: {
+    width: '100%',
+    height: 130,
+  },
+  body: {
+    paddingHorizontal: 10,
+    paddingTop: 8,
+    paddingBottom: 10,
+  },
+  name: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+    marginBottom: 4,
+  },
+  meta: {
+    fontSize: 11,
+    lineHeight: 15,
+  },
+  metaGray: {
+    color: Colors.textSecondary,
+  },
+  metaAccent: {
+    color: Colors.blueAccent,
+    fontWeight: '500',
+  },
+  progressTrack: {
+    height: 4,
+    backgroundColor: Colors.borderLight,
+  },
+  progressFill: {
+    height: 4,
+    backgroundColor: Colors.blueAccent,
+  },
+});
+
+function AddCard({ onPress }: { onPress: () => void }) {
+  return (
+    <TouchableOpacity style={add.card} onPress={onPress} activeOpacity={0.85}>
+      <View style={add.circle}>
+        <Feather name="plus" size={20} color={Colors.blueAccent} />
+      </View>
+      <Text style={add.label}>Add destination</Text>
+    </TouchableOpacity>
+  );
+}
+
+const add = StyleSheet.create({
+  card: {
+    width: 140,
+    borderRadius: Radius.md + 4,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderColor: Colors.borderLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 24,
+    paddingHorizontal: 12,
+    backgroundColor: Colors.bgCard,
+  },
+  circle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(118, 167, 255, 0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  label: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+});
+
+function NextStopCard({
+  stop,
+  onOpenGuide,
+  onViewItineraries,
+}: {
+  stop: typeof MOCK_NEXT_STOP;
+  onOpenGuide: () => void;
+  onViewItineraries: () => void;
+}) {
+  return (
+    <View style={ns.card}>
+      <Text style={ns.dateLabel}>{stop.dateLabel}</Text>
+      <Text style={ns.cityName}>{stop.cityName}</Text>
+      <Text style={ns.quote}>{stop.quote}</Text>
+      <Text style={ns.attribution}>{stop.attribution}</Text>
+      <View style={ns.btnRow}>
+        <TouchableOpacity style={ns.btnYellow} onPress={onOpenGuide} activeOpacity={0.85}>
+          <Text style={ns.btnYellowText}>Open guide</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={ns.btnBlue} onPress={onViewItineraries} activeOpacity={0.85}>
+          <Text style={ns.btnBlueText}>View itineraries</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+const ns = StyleSheet.create({
+  card: {
+    backgroundColor: Colors.navy,
+    borderRadius: Radius.md + 8,
+    padding: Spacing.xl,
+    marginBottom: Spacing.xxl,
+  },
+  dateLabel: {
+    fontSize: 12,
+    color: Colors.textMeta,
+    marginBottom: 6,
+    fontWeight: '500',
+  },
+  cityName: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: Colors.white,
+    marginBottom: 10,
+    lineHeight: 28,
+  },
+  quote: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.75)',
+    lineHeight: 20,
+    fontStyle: 'italic',
+  },
+  attribution: {
+    fontSize: 12,
+    color: Colors.textMeta,
+    marginTop: 6,
+    marginBottom: Spacing.xl,
+    fontWeight: '500',
+  },
+  btnRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  btnYellow: {
+    backgroundColor: Colors.yellow,
+    borderRadius: Radius.full,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+  },
+  btnYellowText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: Colors.navy,
+  },
+  btnBlue: {
+    backgroundColor: Colors.blueAccent,
+    borderRadius: Radius.full,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+  },
+  btnBlueText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: Colors.white,
+  },
+});
+
+function TrendingCard({
+  card,
+  onDiscover,
+}: {
+  card: TrendingCard;
+  onDiscover: () => void;
+}) {
+  return (
+    <View style={tc.card}>
+      {/* Image */}
+      <View style={tc.imgWrap}>
+        <CityImage placeholderColor={card.placeholderColor} />
+        {card.isNew && (
+          <View style={tc.newBadge}>
+            <Text style={tc.newBadgeText}>New guide</Text>
+          </View>
+        )}
+      </View>
+
+      {/* Body */}
+      <View style={tc.body}>
+        <Text style={tc.cityName}>{card.name}</Text>
+        <Text style={tc.meta}>
+          {card.country} · {card.spotsCount} spots · {card.itinerariesCount} itineraries
+        </Text>
+
+        <Text style={tc.quote}>"{card.quote}"</Text>
+        <Text style={tc.attribution}>— Bon Vivant</Text>
+
+        <View style={tc.highlights}>
+          {card.highlights.map((h, i) => (
+            <View key={i} style={tc.highlightRow}>
+              {h.locked ? (
+                <Feather name="lock" size={13} color={Colors.textSecondary} style={tc.highlightIcon} />
+              ) : (
+                <View style={tc.bullet}>
+                  <Text style={tc.bulletNum}>{i + 1}</Text>
+                </View>
+              )}
+              <Text style={[tc.highlightText, h.locked && tc.highlightLocked]}>
+                {h.text}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        <TouchableOpacity style={tc.discoverBtn} onPress={onDiscover} activeOpacity={0.85}>
+          <Text style={tc.discoverText}>Discover {card.name}</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+const tc = StyleSheet.create({
+  card: {
+    backgroundColor: Colors.bgCard,
+    borderRadius: Radius.md + 8,
+    overflow: 'hidden',
+    width: SCREEN_W - CARD_H_PAD * 2,
+  },
+  imgWrap: {
+    width: '100%',
+    height: 200,
+    position: 'relative',
+  },
+  newBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: Colors.badgeGreenBg,
+    borderRadius: Radius.full,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  newBadgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: Colors.badgeGreenText,
+  },
+  body: {
+    padding: Spacing.xl,
+  },
+  cityName: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+    marginBottom: 3,
+  },
+  meta: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.md,
+  },
+  quote: {
+    fontSize: 13,
+    fontStyle: 'italic',
+    color: Colors.textPrimary,
+    lineHeight: 20,
+  },
+  attribution: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    marginTop: 4,
+    marginBottom: Spacing.lg,
+  },
+  highlights: {
+    gap: Spacing.sm,
+    marginBottom: Spacing.xl,
+  },
+  highlightRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.sm,
+  },
+  bullet: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: Colors.blueAccent,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 1,
+    flexShrink: 0,
+  },
+  bulletNum: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: Colors.white,
+  },
+  highlightIcon: {
+    marginTop: 2,
+    width: 20,
+    textAlign: 'center',
+  },
+  highlightText: {
+    flex: 1,
+    fontSize: 13,
+    color: Colors.textPrimary,
+    lineHeight: 20,
+  },
+  highlightLocked: {
+    color: Colors.textSecondary,
+  },
+  discoverBtn: {
+    backgroundColor: Colors.blueAccent,
+    borderRadius: Radius.md,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  discoverText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.white,
+  },
+});
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
@@ -119,11 +518,7 @@ export default function Home() {
   const [selectedCitySlug, setSelectedCitySlug] = useState<string | null>(null);
   const [emailUnconfirmed, setEmailUnconfirmed] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
-  const [guestBannerDismissed, setGuestBannerDismissed] = useState(false);
-
-  function handleGuestAction() {
-    router.push('/(auth)/register');
-  }
+  const [trendingIndex, setTrendingIndex] = useState(0);
 
   useEffect(() => {
     storage.getSelectedCity().then(setSelectedCitySlug);
@@ -134,12 +529,6 @@ export default function Home() {
     });
   }, []);
 
-  const displayName = (() => {
-    const prefix = user?.email?.split('@')[0] ?? '';
-    // TODO: use full_name when profile is complete
-    return prefix.charAt(0).toUpperCase() + prefix.slice(1);
-  })();
-
   const handleResendEmail = useCallback(async () => {
     if (user?.email == null || resendLoading) return;
     setResendLoading(true);
@@ -147,246 +536,148 @@ export default function Home() {
     setResendLoading(false);
   }, [user?.email, resendLoading]);
 
-  const selectedCity = selectedCitySlug != null ? (FREE_CITY_DATA[selectedCitySlug] ?? null) : null;
+  const displayName = (() => {
+    const prefix = user?.email?.split('@')[0] ?? 'there';
+    return prefix.charAt(0).toUpperCase() + prefix.slice(1);
+  })();
+
+  // Use selectedCitySlug from onboarding, or fall back to first mock guide
+  const myGuides: GuideCard[] = selectedCitySlug != null
+    ? MOCK_MY_GUIDES.map((g) => (g.slug === selectedCitySlug ? g : MOCK_MY_GUIDES[0]!))
+    : MOCK_MY_GUIDES;
+
+  const nextStop = MOCK_NEXT_STOP;
+
+  function handleTrendingScroll(e: NativeSyntheticEvent<NativeScrollEvent>) {
+    const idx = Math.round(e.nativeEvent.contentOffset.x / (SCREEN_W - CARD_H_PAD * 2));
+    setTrendingIndex(idx);
+  }
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <ScrollView
-        style={styles.scroll}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
-      >
-        {/* ── 1. Header ─────────────────────────────────────────── */}
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <Text style={styles.welcomeLabel}>{t('home.welcomeBack')}</Text>
-            <Text style={styles.nameText}>{displayName}</Text>
-          </View>
-          {/* TODO: build when cruise data available */}
-          <TouchableOpacity
-            style={styles.cruisePill}
-            onPress={() => router.push('/(app)/profile')}
-            activeOpacity={0.85}
-          >
-            <Text style={styles.cruisePillText}>{t('home.addCruiseDate')}</Text>
-          </TouchableOpacity>
-        </View>
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
 
-        {/* ── 1b. Guest banner ──────────────────────────────────── */}
-        {isGuest && !guestBannerDismissed && (
-          <View style={styles.guestBanner}>
-            <Feather name="user" size={20} color={Colors.teal} />
-            <View style={styles.guestBannerTexts}>
-              <Text style={styles.guestBannerTitle}>{t('home.guestBanner')}</Text>
-              <Text style={styles.guestBannerSub}>{t('home.guestBannerSub')}</Text>
-            </View>
-            <View style={styles.guestBannerRight}>
-              <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
-                <Text style={styles.guestBannerCta}>{t('home.guestBannerCta')}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setGuestBannerDismissed(true)}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                style={styles.guestBannerDismiss}
-              >
-                <Feather name="x" size={14} color={Colors.textTertiary} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-
-        {/* ── 2. Email verification banner ──────────────────────── */}
-        {emailUnconfirmed && user?.email != null && (
-          <View style={styles.verifyBanner}>
-            <View style={styles.verifyLeft}>
-              <Feather name="mail" size={18} color={Colors.amberText} />
-              <View style={styles.verifyTexts}>
-                <Text style={styles.verifyTitle}>{t('home.verifyEmail')}</Text>
-                <Text style={styles.verifySub}>{t('home.verifyEmailSub')}</Text>
-              </View>
-            </View>
-            <TouchableOpacity
-              style={styles.resendBtn}
-              onPress={handleResendEmail}
-              disabled={resendLoading}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.resendText}>{t('home.resend')}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {/* ── 3. My Guides ──────────────────────────────────────── */}
-        <View style={styles.sectionRow}>
-          <Text style={styles.sectionTitle}>{t('home.myGuides')}</Text>
-          <Text style={styles.sectionMeta}>{t('home.cityUnlocked', { count: '1' })}</Text>
-        </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.hScroll}
-          contentContainerStyle={styles.guidesRow}
+        {/* ── Gradient header — paddingBottom provides the 29px gap + fade room ── */}
+        <LinearGradient
+          colors={GRADIENT_COLORS}
+          locations={GRADIENT_LOCS}
+          style={styles.gradientSection}
         >
-          {selectedCity != null && selectedCitySlug != null && (
-            <TouchableOpacity
-              style={styles.cityCard}
-              onPress={() => router.push(`/(app)/city/${selectedCitySlug}`)}
-              activeOpacity={0.85}
-            >
-              <View style={styles.cityCardImg}>
-                <CityImage placeholderColor={selectedCity.placeholderColor} />
-              </View>
-              <View style={styles.cityCardBody}>
-                <Text style={styles.cityCardName}>{selectedCity.name}</Text>
-                <Text style={styles.cityCardCountry}>{selectedCity.country}</Text>
-                {/* TODO: badges data comes from API city detail */}
-                <View style={styles.cityBadgeRow}>
-                  <Text style={styles.cityBadgeItem}>{selectedCity.country}</Text>
-                  <Text style={styles.cityBadgeDot}>·</Text>
-                  <Text style={styles.cityBadgeItem}>
-                    {t('home.guidesBadge', { count: '1' })}
-                  </Text>
-                  <Text style={styles.cityBadgeDot}>·</Text>
-                  <Text style={styles.cityBadgeItem}>
-                    {t('home.itinerariesBadge', { count: '3' })}
-                  </Text>
+          {/* Email verification banner */}
+          {emailUnconfirmed && (
+            <View style={styles.verifyBanner}>
+              <View style={styles.verifyLeft}>
+                <Feather name="mail" size={16} color={Colors.amberText} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.verifyTitle}>Verify your email</Text>
+                  <Text style={styles.verifySub}>Tap the link we sent to unlock offline mode</Text>
                 </View>
               </View>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={handleResendEmail} disabled={resendLoading}>
+                <Text style={styles.resendText}>{resendLoading ? '...' : 'Resend'}</Text>
+              </TouchableOpacity>
+            </View>
           )}
 
-          {/* Add destination card — locked for guests */}
-          <GuestGate isGuest={isGuest} onRegister={handleGuestAction}>
-            <TouchableOpacity
-              style={styles.addCard}
-              onPress={() => router.push('/(app)/explore')}
-              activeOpacity={0.85}
-            >
-              <Feather name="plus" size={24} color={Colors.textTertiary} />
-              <Text style={styles.addCardLabel}>{t('home.addDestination')}</Text>
-              <Text style={styles.addCardPrice}>{t('home.fromPrice')}</Text>
-            </TouchableOpacity>
-          </GuestGate>
-        </ScrollView>
-
-        {/* ── 4. Next Port banner ───────────────────────────────── */}
-        {/* TODO: connect when cruise planning is built */}
-        <View style={styles.nextPortCard}>
-          <View style={styles.nextPortPlaceholderRow}>
-            <Feather name="clock" size={16} color={Colors.textSecondary} />
-            <Text style={styles.nextPortPlaceholderTitle}>{t('home.planCruise')}</Text>
-          </View>
-          <Text style={styles.nextPortPlaceholderSub}>{t('home.planCruiseSub')}</Text>
-          <TouchableOpacity
-            style={styles.nextPortBtn}
-            onPress={() => router.push('/(app)/profile')}
-            activeOpacity={0.85}
-          >
-            <Text style={styles.nextPortBtnText}>{t('home.setupCruise')}</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* ── 5. Discover ───────────────────────────────────────── */}
-        <View style={styles.discoverHeader}>
-          <Text style={styles.sectionTitle}>{t('home.discover')}</Text>
-          <Text style={styles.discoverSub}>{t('home.discoverSub')}</Text>
-        </View>
-
-        {/* Filter pills — TODO: filter logic when API is ready */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.hScroll}
-          contentContainerStyle={styles.filterRow}
-        >
-          <View style={[styles.filterPill, styles.filterPillActive]}>
-            <Text style={[styles.filterPillText, styles.filterPillTextActive]}>
-              {t('home.filterAll')}
-            </Text>
-          </View>
-          <View style={styles.filterPill}>
-            <Text style={styles.filterPillText}>{t('home.filterRoute')}</Text>
-          </View>
-          <View style={styles.filterPill}>
-            <Text style={styles.filterPillText}>{t('home.filterMed')}</Text>
-          </View>
-          <View style={styles.filterPill}>
-            <Text style={styles.filterPillText}>{t('home.filterCaribbean')}</Text>
-          </View>
-        </ScrollView>
-
-        {/* TODO: replace MOCK_CITIES with API call to GET /cities */}
-        {MOCK_CITIES.map((city) => {
-          const badge = BADGE_COLORS[city.badge];
-          return (
-            <TouchableOpacity
-              key={city.slug}
-              style={styles.discoverCard}
-              onPress={() => router.push(`/(app)/city/${city.slug}`)}
-              activeOpacity={0.85}
-            >
-              <View style={styles.discoverCardImg}>
-                <CityImage placeholderColor={city.placeholderColor} />
-              </View>
-              <View style={styles.discoverCardBody}>
-                <View style={styles.discoverCardTop}>
-                  <Text style={styles.discoverCardName}>{city.name}</Text>
-                  <View style={[styles.badgePill, { backgroundColor: badge.bg }]}>
-                    <Text style={[styles.badgePillText, { color: badge.text }]}>
-                      {city.badge}
-                    </Text>
-                  </View>
-                </View>
-                <Text style={styles.discoverCardLocation}>
-                  {city.country} · {city.region}
-                </Text>
-                <Text style={styles.discoverCardQuote} numberOfLines={2}>
-                  {city.quote}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
-
-        {/* ── 6. Bon Vivant Tips ────────────────────────────────── */}
-        <Text style={[styles.sectionTitle, styles.tipsTitle]}>{t('home.bonVivantTips')}</Text>
-        <Text style={styles.tipsSub}>{t('home.bonVivantTipsSub')}</Text>
-        {/* TODO: replace MOCK_TIPS with API call to GET /tips/general */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.hScroll}
-          contentContainerStyle={styles.tipsRow}
-        >
-          {MOCK_TIPS.map((tip) => (
-            <View key={tip.id} style={styles.tipCard}>
-              <Text style={styles.tipQuoteMark}>{'“'}</Text>
-              <Text style={styles.tipContent}>{tip.content}</Text>
-              <Text style={styles.tipAuthor}>{t('home.bonVivantAttr')}</Text>
+          {/* Header */}
+          <View style={styles.header}>
+            <View>
+              <Text style={styles.welcomeLabel}>Welcome back</Text>
+              <Text style={styles.nameText}>{displayName}</Text>
             </View>
-          ))}
-        </ScrollView>
+            <CruisePill label="Next cruise" value="12 days" />
+          </View>
+        </LinearGradient>
 
-        {/* ── 7. Cruise Pack CTA — locked for guests ────────────── */}
-        <GuestGate isGuest={isGuest} onRegister={handleGuestAction}>
-          <View style={styles.cruisePackCard}>
-            {/* TODO: replace CRUISE_PORT_COUNT with actual port count from cruise data */}
-            <Text style={styles.cruisePackTitle}>
-              {t('home.cruisePack', { count: String(CRUISE_PORT_COUNT) })}
+        {/* ── bgPrimary: My Guides + rest of content ── */}
+        <View style={styles.contentBelow}>
+
+          {/* My Guides */}
+          <View style={styles.sectionRow}>
+            <Text style={styles.sectionTitle}>My Guides</Text>
+            <Text style={styles.sectionMeta}>1 city unlocked</Text>
+          </View>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.hScroll}
+            contentContainerStyle={styles.guidesRow}
+          >
+            {myGuides.map((g) => (
+              <GuideCardItem
+                key={g.slug}
+                card={g}
+                onPress={() => router.push(`/(app)/city/${g.slug}`)}
+              />
+            ))}
+            <AddCard onPress={() => router.push('/(app)/explore')} />
+          </ScrollView>
+
+
+          {/* Next Stop card */}
+          <NextStopCard
+            stop={nextStop}
+            onOpenGuide={() => router.push(`/(app)/city/${nextStop.slug}`)}
+            onViewItineraries={() => router.push(`/(app)/city/${nextStop.slug}`)}
+          />
+
+          {/* Trending */}
+          <View style={styles.sectionRow}>
+            <View>
+              <Text style={styles.sectionTitle}>Trending</Text>
+              <Text style={styles.sectionSubtitle}>Find your next favorite city</Text>
+            </View>
+          </View>
+
+          <FlatList
+            data={MOCK_TRENDING}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(c) => c.slug}
+            onScroll={handleTrendingScroll}
+            scrollEventThrottle={16}
+            snapToInterval={SCREEN_W - CARD_H_PAD * 2}
+            decelerationRate="fast"
+            contentContainerStyle={styles.trendingList}
+            style={styles.trendingScroll}
+            renderItem={({ item }) => (
+              <TrendingCard
+                card={item}
+                onDiscover={() => router.push(`/(app)/city/${item.slug}`)}
+              />
+            )}
+          />
+
+          {/* Pagination dots */}
+          <View style={styles.dotsRow}>
+            {MOCK_TRENDING.map((_, i) => (
+              <View
+                key={i}
+                style={[styles.dot, i === trendingIndex && styles.dotActive]}
+              />
+            ))}
+          </View>
+
+          {/* Cruise CTA */}
+          <View style={styles.cruiseCard}>
+            <Text style={styles.cruiseTitle}>
+              Your cruise visits {CRUISE_PORT_COUNT} ports
             </Text>
-            <Text style={styles.cruisePackSub}>{t('home.cruisePackSub')}</Text>
+            <Text style={styles.cruiseSub}>Your guides are ready when you are</Text>
             <TouchableOpacity
-              style={styles.cruisePackBtn}
+              style={styles.cruiseBtn}
               onPress={() => router.push('/(app)/explore')}
               activeOpacity={0.85}
             >
-              <Text style={styles.cruisePackBtnText}>{t('home.cruisePackCta')}</Text>
+              <Text style={styles.cruiseBtnText}>View packs</Text>
             </TouchableOpacity>
           </View>
-        </GuestGate>
 
-        {/* ── 8. Bottom padding ─────────────────────────────────── */}
-        <View style={styles.bottomPad} />
+          <View style={{ height: 100 }} />
+        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -397,14 +688,25 @@ export default function Home() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: '#76A7FF', // matches gradient start color
   },
   scroll: {
     flex: 1,
+    backgroundColor: Colors.bgPrimary,
   },
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
+
+  // Gradient container — paddingBottom provides the 29px gap AND space for the fade to complete
+  gradientSection: {
+    paddingHorizontal: CARD_H_PAD,
+    paddingTop: Spacing.lg,
+    paddingBottom: 29,
+  },
+
+  // bgPrimary section — My Guides onwards; spacing comes from gradientSection.paddingBottom
+  contentBelow: {
+    paddingHorizontal: CARD_H_PAD,
+    paddingTop: 0,
+    backgroundColor: Colors.bgPrimary,
   },
 
   // Header
@@ -412,90 +714,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  headerLeft: {
-    flex: 1,
+    marginBottom: 0,
   },
   welcomeLabel: {
-    fontSize: 12,
-    color: Colors.textSecondary,
+    ...Typography.welcomeText,
+    color: Colors.white,
+    marginBottom: 3,
   },
   nameText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: Colors.text,
-  },
-  cruisePill: {
-    backgroundColor: Colors.navy,
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    marginLeft: 12,
-  },
-  cruisePillText: {
-    fontSize: 11,
-    color: Colors.background,
-    fontWeight: '500',
+    ...Typography.displayName,
+    color: Colors.textPrimary,
   },
 
-  // Guest banner
-  guestBanner: {
-    backgroundColor: Colors.guestBannerBg,
-    borderRadius: 12,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderLeftWidth: 3,
-    borderLeftColor: Colors.teal,
-    marginBottom: 16,
-    gap: 10,
-  },
-  guestBannerTexts: {
-    flex: 1,
-  },
-  guestBannerTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: Colors.text,
-  },
-  guestBannerSub: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  guestBannerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  guestBannerCta: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: Colors.teal,
-  },
-  guestBannerDismiss: {
-    padding: 2,
-  },
-
-  // Email verification banner
+  // Email banner
   verifyBanner: {
-    backgroundColor: Colors.amberLight,
-    borderRadius: 12,
-    padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    backgroundColor: Colors.amberLight,
+    borderRadius: Radius.md + 4,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 10,
+    marginBottom: Spacing.lg,
+    gap: Spacing.sm,
   },
   verifyLeft: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-start',
-    flex: 1,
-    gap: 8,
-  },
-  verifyTexts: {
-    flex: 1,
+    gap: Spacing.sm,
   },
   verifyTitle: {
     fontSize: 13,
@@ -506,321 +753,108 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Colors.amberText,
     marginTop: 2,
-    lineHeight: 16,
-  },
-  resendBtn: {
-    backgroundColor: Colors.amberMid,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    marginLeft: 8,
+    lineHeight: 15,
   },
   resendText: {
-    fontSize: 12,
-    color: Colors.background,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '700',
+    color: Colors.amberMid,
+    flexShrink: 0,
   },
 
-  // Section headers
+  // Section rows
   sectionRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: Spacing.md,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: Colors.text,
+    ...Typography.sectionHeading,
+    color: Colors.textPrimary,
   },
   sectionMeta: {
     fontSize: 12,
     color: Colors.textSecondary,
+    marginTop: 4,
+    fontWeight: '400',
   },
-
-  // Horizontal scroll shared
-  hScroll: {
-    marginHorizontal: -20,
-  },
-
-  // My Guides
-  guidesRow: {
-    paddingHorizontal: 20,
-    paddingBottom: 4,
-    gap: 12,
-    marginBottom: 20,
-  },
-  cityCard: {
-    width: 160,
-    borderRadius: 16,
-    overflow: 'hidden',
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.borderFaint,
-  },
-  cityCardImg: {
-    width: '100%',
-    height: 110,
-  },
-  cityCardBody: {
-    padding: 10,
-  },
-  cityCardName: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: Colors.text,
-  },
-  cityCardCountry: {
-    fontSize: 11,
+  sectionSubtitle: {
+    fontSize: 13,
     color: Colors.textSecondary,
     marginTop: 2,
+  },
+
+  // Horizontal scroll (negative margin escapes gradientSection padding)
+  hScroll: {
+    marginHorizontal: -CARD_H_PAD,
+    marginBottom: 0,
+  },
+  guidesRow: {
+    paddingHorizontal: CARD_H_PAD,
+    gap: Spacing.md,
+    paddingBottom: Spacing.xl,
+  },
+
+  // Trending carousel
+  trendingScroll: {
+    marginHorizontal: -CARD_H_PAD,
+  },
+  trendingList: {
+    paddingHorizontal: CARD_H_PAD,
+    gap: Spacing.md,
+  },
+
+  // Pagination dots
+  dotsRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.xxl,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: Colors.borderLight,
+  },
+  dotActive: {
+    backgroundColor: Colors.blueAccent,
+    width: 18,
+  },
+
+  // Cruise CTA
+  cruiseCard: {
+    backgroundColor: Colors.navy,
+    borderRadius: Radius.md + 8,
+    padding: Spacing.xl,
+    marginBottom: Spacing.lg,
+    alignItems: 'center',
+  },
+  cruiseTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: Colors.white,
+    textAlign: 'center',
+    lineHeight: 26,
     marginBottom: 6,
   },
-  cityBadgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 3,
-  },
-  cityBadgeItem: {
-    fontSize: 10,
-    color: Colors.textSecondary,
-  },
-  cityBadgeDot: {
-    fontSize: 10,
-    color: Colors.textTertiary,
-  },
-
-  // Add destination card
-  addCard: {
-    width: 140,
-    borderRadius: 16,
-    borderWidth: 1.5,
-    borderStyle: 'dashed',
-    borderColor: Colors.borderLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20,
-    paddingHorizontal: 12,
-  },
-  addCardLabel: {
+  cruiseSub: {
     fontSize: 13,
-    color: Colors.textSecondary,
-    marginTop: 8,
+    color: Colors.blueLight,
     textAlign: 'center',
+    marginBottom: Spacing.xl,
   },
-  addCardPrice: {
-    fontSize: 12,
-    color: Colors.teal,
-    marginTop: 4,
-    fontWeight: '600',
+  cruiseBtn: {
+    backgroundColor: Colors.white,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.xxl,
+    paddingVertical: 12,
   },
-
-  // Next Port banner
-  nextPortCard: {
-    backgroundColor: Colors.infoLight,
-    borderRadius: 16,
-    padding: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.teal,
-    marginBottom: 24,
-  },
-  nextPortPlaceholderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 8,
-  },
-  nextPortPlaceholderTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: Colors.text,
-  },
-  nextPortPlaceholderSub: {
-    fontSize: 13,
-    color: Colors.textSecondary,
-    lineHeight: 20,
-    marginBottom: 14,
-  },
-  nextPortBtn: {
-    backgroundColor: Colors.text,
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    alignSelf: 'flex-start',
-  },
-  nextPortBtnText: {
-    fontSize: 13,
-    color: Colors.background,
-    fontWeight: '600',
-  },
-
-  // Discover
-  discoverHeader: {
-    marginBottom: 10,
-  },
-  discoverSub: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  filterRow: {
-    paddingHorizontal: 20,
-    paddingBottom: 4,
-    gap: 8,
-    marginBottom: 12,
-  },
-  filterPill: {
-    backgroundColor: Colors.surface,
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  filterPillActive: {
-    backgroundColor: Colors.text,
-    borderColor: Colors.text,
-  },
-  filterPillText: {
-    fontSize: 13,
-    color: Colors.textSecondary,
-    fontWeight: '500',
-  },
-  filterPillTextActive: {
-    color: Colors.background,
-  },
-
-  // Discover cards
-  discoverCard: {
-    height: 90,
-    flexDirection: 'row',
-    borderRadius: 16,
-    overflow: 'hidden',
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: Colors.borderFaint,
-    backgroundColor: Colors.background,
-  },
-  discoverCardImg: {
-    width: 100,
-    height: '100%',
-  },
-  discoverCardBody: {
-    flex: 1,
-    padding: 12,
-    justifyContent: 'center',
-  },
-  discoverCardTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 2,
-  },
-  discoverCardName: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.text,
-    flex: 1,
-    marginRight: 6,
-  },
-  discoverCardLocation: {
-    fontSize: 11,
-    color: Colors.textSecondary,
-    marginBottom: 3,
-  },
-  discoverCardQuote: {
-    fontSize: 12,
-    fontStyle: 'italic',
-    color: Colors.textSecondary,
-    lineHeight: 16,
-  },
-  badgePill: {
-    borderRadius: 20,
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    flexShrink: 0,
-  },
-  badgePillText: {
-    fontSize: 10,
-    fontWeight: '600',
-  },
-
-  // Tips
-  tipsTitle: {
-    marginTop: 8,
-  },
-  tipsSub: {
-    fontSize: 12,
-    color: Colors.textSecondary,
-    marginTop: 2,
-    marginBottom: 12,
-  },
-  tipsRow: {
-    paddingHorizontal: 20,
-    paddingBottom: 4,
-    gap: 12,
-    marginBottom: 24,
-  },
-  tipCard: {
-    width: 200,
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-  },
-  tipQuoteMark: {
-    fontSize: 32,
-    color: Colors.teal,
-    fontWeight: '700',
-    lineHeight: 32,
-    marginBottom: 4,
-  },
-  tipContent: {
-    fontSize: 13,
-    color: Colors.primaryLight,
-    lineHeight: 20,
-  },
-  tipAuthor: {
-    fontSize: 11,
-    color: Colors.teal,
-    marginTop: 8,
-    fontWeight: '500',
-  },
-
-  // Cruise Pack CTA
-  cruisePackCard: {
-    backgroundColor: Colors.navy,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 8,
-  },
-  cruisePackTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: Colors.background,
-  },
-  cruisePackSub: {
-    fontSize: 13,
-    color: Colors.background,
-    opacity: 0.7,
-    marginTop: 4,
-  },
-  cruisePackBtn: {
-    backgroundColor: Colors.teal,
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    alignSelf: 'flex-start',
-    marginTop: 16,
-  },
-  cruisePackBtnText: {
+  cruiseBtnText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: Colors.background,
-  },
-
-  // Bottom padding
-  bottomPad: {
-    height: 100,
+    fontWeight: '700',
+    color: Colors.navy,
   },
 });

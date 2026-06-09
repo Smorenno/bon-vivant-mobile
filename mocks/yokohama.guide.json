@@ -162,8 +162,8 @@
       "whyItMatters": null,
       "goodToKnow": null,
       "tagLine": null,
-      "cuisineType": "Cocina de Sichuan (China)",
-      "categoryLabel": "Restaurante",
+      "cuisineType": "Malatang · Sichuan",
+      "categoryLabel": "Sichuan callejero",
       "mustTry": "Malatang nivel 2 de picante con fideos y ternera",
       "bestTime": "Almuerzo (12:00–14:00)"
     },
@@ -185,10 +185,33 @@
       "whyItMatters": null,
       "goodToKnow": null,
       "tagLine": null,
-      "cuisineType": "Sushi japonés",
-      "categoryLabel": "Restaurante",
+      "cuisineType": "Especialistas en atún",
+      "categoryLabel": "Sushi tradicional",
       "mustTry": "Omakase del chef o el set de tuna (atún) fresco",
       "bestTime": "Almuerzo (11:30–14:00)"
+    },
+    {
+      "id": "yk-f3",
+      "cityId": "yokohama",
+      "kind": "food",
+      "category": "cafe",
+      "name": "Café Cocktail-do",
+      "address": "3F, MARK IS Minatomirai mall, Nishi-ku",
+      "latitude": 35.456,
+      "longitude": 139.634,
+      "distanceFromPortKm": 1.4,
+      "rankOrder": 3,
+      "website": null,
+      "manuelQuote": "Un lugar perfecto para un descanso a mitad del paseo: buen café, dulces japoneses exquisitos y vistas al corazón de Minato Mirai.",
+      "reservation": "No hace falta.",
+      "whatItIs": null,
+      "whyItMatters": null,
+      "goodToKnow": null,
+      "tagLine": null,
+      "cuisineType": "Café",
+      "categoryLabel": "Café",
+      "mustTry": "Las tartas variadas — elige dos, sin remordimientos.",
+      "bestTime": "Cualquier momento"
     }
   ],
   "itineraries": [
@@ -309,6 +332,63 @@
           "timeOnSiteMax": null
         }
       ]
+    },
+    {
+      "id": "yk-it2",
+      "cityId": "yokohama",
+      "theme": "chinatown_gourmet",
+      "timeOfDay": "day",
+      "title": "Barrio Chino & Gastronomía",
+      "catchyPhrase": "Sabores de Asia y las calles más vivas de Japón",
+      "bestFor": "Amantes de la gastronomía asiática",
+      "durationMinHrs": 3,
+      "durationMaxHrs": 5,
+      "totalWalkKm": 2.8,
+      "totalTransitKm": null,
+      "flexNote": "Añade el Almacén de Ladrillo Rojo si tienes tiempo extra.",
+      "isRecommended": false,
+      "isPremium": true,
+      "isLocked": true,
+      "rankOrder": 2,
+      "steps": []
+    },
+    {
+      "id": "yk-it3",
+      "cityId": "yokohama",
+      "theme": "culture_deep_dive",
+      "timeOfDay": "day",
+      "title": "Historia & Arte",
+      "catchyPhrase": "Museos, santuarios y el Yokohama más auténtico",
+      "bestFor": "Amantes de la historia y el arte",
+      "durationMinHrs": 4,
+      "durationMaxHrs": 6,
+      "totalWalkKm": 4.1,
+      "totalTransitKm": 1.2,
+      "flexNote": "El Museo de Arte de Yokohama cierra los martes.",
+      "isRecommended": false,
+      "isPremium": true,
+      "isLocked": true,
+      "rankOrder": 3,
+      "steps": []
+    },
+    {
+      "id": "yk-it4",
+      "cityId": "yokohama",
+      "theme": "sunset_night",
+      "timeOfDay": "night",
+      "title": "Atardecer & Noche",
+      "catchyPhrase": "La noria iluminada, el onsen y las luces del puerto",
+      "bestFor": "Solo si tu barco sale tarde o pernocta en Yokohama",
+      "durationMinHrs": 2,
+      "durationMaxHrs": 4,
+      "totalWalkKm": 1.8,
+      "totalTransitKm": null,
+      "flexNote": "Solo válido si el barco sale después de las 21:00.",
+      "isRecommended": false,
+      "isPremium": true,
+      "isLocked": true,
+      "rankOrder": 4,
+      "steps": []
     }
   ],
   "tips": [
@@ -325,6 +405,20 @@
       "title": "El ritual del efectivo en Japón",
       "body": "Saca efectivo en el cajero del 7-Eleven o Family Mart nada más llegar — aceptan tarjetas internacionales con fiabilidad. Muchos restaurantes pequeños y tiendas del barrio chino solo aceptan yenes. En Japón presentar el billete y recoger el cambio en la bandejita de la caja es una norma no escrita: no lo saltes.",
       "rankOrder": 2
+    },
+    {
+      "id": "yk-tip3",
+      "cityId": "yokohama",
+      "title": "WiFi de bolsillo",
+      "body": "Alquila un router WiFi portátil (como Sakura Mobile) — funciona como un router portátil que conecta todos tus dispositivos. A menudo tienen un stand en la terminal de cruceros de Yokohama, o puedes recoger uno en el aeropuerto de Tokio.\n\nAún mejor: pídelo antes de salir y recíbelo en casa. Google Maps, servicios de traducción, horarios de trenes — todo en la palma de tu mano. Es increíblemente cómodo y económico.",
+      "rankOrder": 3
+    },
+    {
+      "id": "yk-tip4",
+      "cityId": "yokohama",
+      "title": "Quédate en el Intercontinental",
+      "body": "Si tu crucero pernocta en Yokohama, el InterContinental Yokohama Grand tiene las mejores vistas de la bahía de toda la ciudad. Está en el corazón de Minato Mirai, a 5 minutos a pie de todo. Incluso si no te alojas, vale la pena subir al bar del último piso al atardecer.",
+      "rankOrder": 4
     }
   ],
   "warnings": [
