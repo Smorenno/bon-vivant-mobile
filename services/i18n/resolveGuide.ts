@@ -6,26 +6,31 @@ import type {
   CityMetaRaw,
   HighlightRaw,
   TransportOptionRaw,
+  WhatToKnowItemRaw,
   NoteRaw,
   SpotRaw,
   ItineraryStepRaw,
   ItineraryRaw,
   TipRaw,
+  ImageRaw,
   CityGuide,
   CityGuidePreview,
 } from '@/types/guide';
-
-// Each resolver handles exactly one entity. pick() is the only call site for
-// LocalizedText → string. No generic walker — explicit per-field resolution.
 
 export function resolveCityMeta(raw: CityMetaRaw, locale: Locale) {
   return {
     slug: raw.slug,
     name: raw.name,
     countryCode: raw.countryCode,
-    portName: raw.portName,
     tagline: pick(raw.tagline, locale),
-    description: pick(raw.description, locale),
+    intro: pick(raw.intro, locale),
+    historicalContext: pick(raw.historicalContext, locale),
+    portDescription: pick(raw.portDescription, locale),
+    distanceToCenter: pick(raw.distanceToCenter, locale),
+    portFacilities: pick(raw.portFacilities, locale),
+    portRecommendation: pick(raw.portRecommendation, locale),
+    portLat: raw.portLat,
+    portLng: raw.portLng,
     isUnlocked: raw.isUnlocked,
     imageUrl: raw.imageUrl,
     latitude: raw.latitude,
@@ -36,7 +41,7 @@ export function resolveCityMeta(raw: CityMetaRaw, locale: Locale) {
 function resolveHighlight(raw: HighlightRaw, locale: Locale) {
   return {
     id: raw.id,
-    title: pick(raw.title, locale),
+    label: pick(raw.label, locale),
     description: pick(raw.description, locale),
   };
 }
@@ -46,6 +51,14 @@ function resolveTransportOption(raw: TransportOptionRaw, locale: Locale) {
     method: raw.method,
     timeLabel: raw.timeLabel,
     tips: pick(raw.tips, locale),
+  };
+}
+
+function resolveWhatToKnow(raw: WhatToKnowItemRaw, locale: Locale) {
+  return {
+    id: raw.id,
+    heading: pick(raw.heading, locale),
+    text: pick(raw.text, locale),
   };
 }
 
@@ -59,6 +72,7 @@ function resolveNote(raw: NoteRaw, locale: Locale) {
 function resolveSpot(raw: SpotRaw, locale: Locale) {
   return {
     id: raw.id,
+    cityId: raw.cityId,
     kind: raw.kind,
     category: raw.category,
     name: raw.name,
@@ -67,7 +81,10 @@ function resolveSpot(raw: SpotRaw, locale: Locale) {
     longitude: raw.longitude,
     distanceFromPortKm: raw.distanceFromPortKm,
     rankOrder: raw.rankOrder,
+    website: raw.website,
     manuelQuote: raw.manuelQuote != null ? pick(raw.manuelQuote, locale) : null,
+    reservation: raw.reservation != null ? pick(raw.reservation, locale) : null,
+    tagLine: raw.tagLine != null ? pick(raw.tagLine, locale) : null,
     whatItIs: raw.whatItIs != null ? pick(raw.whatItIs, locale) : null,
     whyItMatters: raw.whyItMatters != null ? pick(raw.whyItMatters, locale) : null,
     goodToKnow: raw.goodToKnow != null ? pick(raw.goodToKnow, locale) : null,
@@ -81,26 +98,42 @@ function resolveSpot(raw: SpotRaw, locale: Locale) {
 function resolveStep(raw: ItineraryStepRaw, locale: Locale) {
   return {
     id: raw.id,
-    order: raw.order,
+    itineraryId: raw.itineraryId,
+    rankOrder: raw.rankOrder,
     spotId: raw.spotId,
     spot: raw.spot != null ? resolveSpot(raw.spot, locale) : null,
-    durationMin: raw.durationMin,
-    distanceFromPreviousKm: raw.distanceFromPreviousKm,
+    title: raw.title != null ? pick(raw.title, locale) : null,
+    address: raw.address,
+    description: raw.description != null ? pick(raw.description, locale) : null,
+    bonVivantNotes: raw.bonVivantNotes != null ? pick(raw.bonVivantNotes, locale) : null,
+    mustTry: raw.mustTry != null ? pick(raw.mustTry, locale) : null,
+    reservation: raw.reservation != null ? pick(raw.reservation, locale) : null,
+    website: raw.website,
+    distanceFromPrevKm: raw.distanceFromPrevKm,
     travelMode: raw.travelMode,
-    note: raw.note != null ? pick(raw.note, locale) : null,
+    timeOnSiteMin: raw.timeOnSiteMin,
+    timeOnSiteMax: raw.timeOnSiteMax,
   };
 }
 
 function resolveItinerary(raw: ItineraryRaw, locale: Locale) {
   return {
     id: raw.id,
-    durationHours: raw.durationHours,
+    cityId: raw.cityId,
+    theme: raw.theme,
     timeOfDay: raw.timeOfDay,
-    isRecommended: raw.isRecommended,
-    isLocked: raw.isLocked,
-    isPremium: raw.isPremium,
     title: pick(raw.title, locale),
-    description: raw.description != null ? pick(raw.description, locale) : null,
+    catchyPhrase: pick(raw.catchyPhrase, locale),
+    bestFor: pick(raw.bestFor, locale),
+    durationMinHrs: raw.durationMinHrs,
+    durationMaxHrs: raw.durationMaxHrs,
+    totalWalkKm: raw.totalWalkKm,
+    totalTransitKm: raw.totalTransitKm,
+    flexNote: pick(raw.flexNote, locale),
+    isRecommended: raw.isRecommended,
+    isPremium: raw.isPremium,
+    isLocked: raw.isLocked,
+    rankOrder: raw.rankOrder,
     steps: raw.steps.map((s) => resolveStep(s, locale)),
   };
 }
@@ -109,8 +142,20 @@ function resolveTip(raw: TipRaw, locale: Locale) {
   return {
     id: raw.id,
     cityId: raw.cityId,
-    text: pick(raw.text, locale),
-    author: raw.author,
+    title: pick(raw.title, locale),
+    body: pick(raw.body, locale),
+    rankOrder: raw.rankOrder,
+  };
+}
+
+function resolveImage(raw: ImageRaw, locale: Locale) {
+  return {
+    id: raw.id,
+    cityId: raw.cityId,
+    spotId: raw.spotId,
+    slot: raw.slot,
+    storagePath: raw.storagePath,
+    altText: pick(raw.altText, locale),
   };
 }
 
@@ -119,10 +164,12 @@ export function resolveGuide(raw: CityGuideRaw, locale: Locale): CityGuide {
     meta: resolveCityMeta(raw.meta, locale),
     highlights: raw.highlights.map((h) => resolveHighlight(h, locale)),
     transport: raw.transport.map((t) => resolveTransportOption(t, locale)),
+    whatToKnow: raw.whatToKnow.map((w) => resolveWhatToKnow(w, locale)),
     spots: raw.spots.map((s) => resolveSpot(s, locale)),
     itineraries: raw.itineraries.map((i) => resolveItinerary(i, locale)),
     tips: raw.tips.map((t) => resolveTip(t, locale)),
     warnings: raw.warnings.map((w) => resolveNote(w, locale)),
+    images: raw.images.map((img) => resolveImage(img, locale)),
   };
 }
 

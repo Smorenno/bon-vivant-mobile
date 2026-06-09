@@ -1,0 +1,370 @@
+{
+  "_note": "Mock resuelto — todos los campos de texto son strings planos en español (es). El dato real llegará de la API como LocalizedText y se resolverá con services/pick() antes de llegar a los componentes. No usar este archivo en producción.",
+  "meta": {
+    "slug": "yokohama",
+    "name": "Yokohama",
+    "countryCode": "JP",
+    "tagline": "La ciudad que abrió Japón al mundo",
+    "intro": "Antes una tranquila aldea pesquera, Yokohama se convirtió en una de las ciudades más cosmopolitas de Japón tras abrir sus puertos al comercio internacional en 1859. Fue la primera ciudad del país en establecer una conexión ferroviaria con Tokio — ahora solo a 30 minutos — y alberga el barrio chino más antiguo y grande de Japón.\n\nHoy Yokohama es la segunda ciudad más grande de Japón con 3,7 millones de habitantes, situada en la bahía de Tokio. Una metrópolis preciosa y fácil de recorrer donde la arquitectura futurista de la costa convive con barrios culturales centenarios.",
+    "historicalContext": "Yokohama abrió al comercio internacional en 1859, transformándose de aldea pesquera en la puerta de Japón al mundo.\n\nConstructora del primer ferrocarril del país (a Tokio) y fundadora del primer barrio chino de Japón, que sigue siendo uno de los más grandes del mundo.",
+    "portDescription": "Llegarás a la Terminal Internacional de Pasajeros Osanbashi, en el Muelle Osanbashi, puerta al mar desde 1894. La terminal actual fue renovada y reinaugurada en 2002 con un sorprendente diseño arquitectónico moderno. Puede acoger hasta cuatro grandes cruceros a la vez.\n\nEl tejado tiene una terraza de observación con paseos peatonales y vistas espectaculares de la Bahía de Yokohama y el skyline de la ciudad.",
+    "distanceToCenter": "1 a 1,5 km al centro de Yokohama (zona Minato Mirai).",
+    "portFacilities": "La terminal incluye aparcamiento, instalaciones de aduana e inmigración, restaurantes, tiendas y sala de eventos. La terraza de observación del tejado es un atractivo en sí misma. El terminal está a distancia a pie de Yamashita Park, el barrio chino y el Almacén de Ladrillo Rojo. Autobuses conectan con todas las zonas principales.",
+    "portRecommendation": "\"Camina. En serio — la terminal está tan cerca de Minato Mirai que el taxi es innecesario. El paseo de 15 minutos por el frente marítimo es precioso, y pasarás por Yamashita Park y el Almacén de Ladrillo Rojo. Guarda el taxi para la vuelta si te cansas.\"",
+    "portLat": 35.4479,
+    "portLng": 139.6444,
+    "isUnlocked": true,
+    "imageUrl": null,
+    "latitude": 35.4437,
+    "longitude": 139.638
+  },
+  "highlights": [
+    {
+      "id": "yk-h1",
+      "label": "Minato Mirai 21",
+      "description": "Distrito costero futurista con compras, gastronomía y la icónica Landmark Tower."
+    },
+    {
+      "id": "yk-h2",
+      "label": "Barrio Chino de Yokohama",
+      "description": "El primer barrio chino de Japón, con cientos de restaurantes y tiendas en calles de colores."
+    },
+    {
+      "id": "yk-h3",
+      "label": "Yamashita Park",
+      "description": "Un tranquilo paseo marítimo con vistas espectaculares al puerto y el skyline."
+    }
+  ],
+  "transport": [
+    {
+      "method": "walk",
+      "timeLabel": "15-20 min",
+      "tips": "Ruta escénica por el frente marítimo directo al corazón de Minato Mirai — compras, restaurantes, museos y conexiones de tren, todo a pie."
+    },
+    {
+      "method": "metro",
+      "timeLabel": "7 min (caminata + viaje)",
+      "tips": "La Línea Minato Mirai sale de la estación Bashamichi, a poca distancia del muelle. Conecta directamente con la estación de Yokohama y más allá."
+    },
+    {
+      "method": "taxi",
+      "timeLabel": "5-10 min",
+      "tips": "Disponible en la terminal. Consejo: lleva una nota escrita en japonés con la dirección del puerto — mucho más fácil para los conductores."
+    },
+    {
+      "method": "train",
+      "timeLabel": "30 min",
+      "tips": "JR Tokaido o Yokosuka desde la estación de Yokohama hasta Tokio. O Tokyu Toyoko desde Shibuya directo a Minatomirai."
+    }
+  ],
+  "whatToKnow": [
+    {
+      "id": "yk-wtk1",
+      "heading": "Efectivo vs. tarjeta",
+      "text": "Japón sigue siendo una sociedad predominantemente en efectivo. Muchos restaurantes pequeños y tiendas del barrio chino solo aceptan yenes en metálico. Los cajeros del 7-Eleven y el Family Mart aceptan tarjetas Visa y Mastercard internacionales sin problema — son tu mejor opción."
+    },
+    {
+      "id": "yk-wtk2",
+      "heading": "Tarjeta Suica",
+      "text": "Si vas a usar el metro o el tren, compra una tarjeta Suica recargable en la estación de Yokohama. Funciona en todos los metros, autobuses y muchas tiendas de conveniencia. Ahorra tiempo, evita colas y elimina la barrera del idioma en las máquinas expendedoras."
+    },
+    {
+      "id": "yk-wtk3",
+      "heading": "Idioma",
+      "text": "El inglés es limitado fuera de las zonas turísticas principales. Descarga Google Translate y activa el modo cámara — es un cambio de juego para leer menús y carteles. Los locales son extraordinariamente amables; señalar y sonreír funciona de maravilla."
+    }
+  ],
+  "spots": [
+    {
+      "id": "yk-s1",
+      "cityId": "yokohama",
+      "kind": "attraction",
+      "category": null,
+      "name": "Minato Mirai 21 (MM21)",
+      "address": null,
+      "latitude": 35.4567,
+      "longitude": 139.633,
+      "distanceFromPortKm": 1.2,
+      "rankOrder": 1,
+      "website": null,
+      "manuelQuote": "Literalmente a distancia a pie del barco (20 minutos). Para en World Porters — encontrarás de todo, incluyendo el increíble restaurante de sushi Maguro Tomya Megumi, sushi japonés de verdad.",
+      "reservation": null,
+      "whatItIs": "Concebido en los años 80 como un gran proyecto de regeneración urbana que transformó el frente marítimo industrial y los astilleros de Yokohama en un moderno centro futurista.",
+      "whyItMatters": "Es tu puerta de salida del barco a todo lo que está cerca: compras, arte y gastronomía, el museo Nippon Maru, el Cup Noodles Museum, el parque de atracciones Cosmo World, el mirador Landmark Tower Sky Garden y el centro comercial Landmark Plaza — todo conectado y a pie.\n\nEste es tu punto de partida desde el barco hacia todo lo que tienes cerca.",
+      "goodToKnow": null,
+      "tagLine": "Distrito costero futurista",
+      "cuisineType": null,
+      "categoryLabel": null,
+      "mustTry": null,
+      "bestTime": null
+    },
+    {
+      "id": "yk-s2",
+      "cityId": "yokohama",
+      "kind": "attraction",
+      "category": null,
+      "name": "Yokohama Chinatown",
+      "address": null,
+      "latitude": 35.4432,
+      "longitude": 139.6498,
+      "distanceFromPortKm": 0.8,
+      "rankOrder": 2,
+      "website": null,
+      "manuelQuote": "En el barrio prueba el restaurante YGF Malatang (218-4 Yamashitacho Naka Ward). El Malatang es comida callejera de Sichuan (tipo Ramen) con pimienta de Sichuan y guindilla seca, más carnes, verduras y fideos.",
+      "reservation": null,
+      "whatItIs": "El primer y más grande barrio chino de Japón.",
+      "whyItMatters": "Uno de los barrios chinos más grandes del mundo, con cientos de restaurantes, tiendas y templos en calles vibrantes. Este fue el primer barrio chino establecido en Japón.",
+      "goodToKnow": null,
+      "tagLine": "El primer y mayor barrio chino de Japón",
+      "cuisineType": null,
+      "categoryLabel": null,
+      "mustTry": null,
+      "bestTime": null
+    },
+    {
+      "id": "yk-s3",
+      "cityId": "yokohama",
+      "kind": "attraction",
+      "category": null,
+      "name": "Manyo Club",
+      "address": "Minato Mirai, Naka Ward, Shinko, 2 Chome-7-1 4F",
+      "latitude": 35.4573,
+      "longitude": 139.6357,
+      "distanceFromPortKm": 1.5,
+      "rankOrder": 3,
+      "website": "www.manyo.co.jp",
+      "manuelQuote": "Tómate el baño de pies en la azotea al atardecer — la vista sobre Minato Mirai con la noria iluminada es uno de esos momentos que solo ocurren cuando sabes dónde ir.",
+      "reservation": null,
+      "whatItIs": "Hotel de aguas termales (Onsen) con baño de pies en la azotea, baños interiores y exteriores, y SPA completo.",
+      "whyItMatters": "Uno de los onsens más accesibles para visitantes de crucero — no se necesita japonés, toallas y yukata incluidos, y la vista desde la azotea sobre Cosmo World es espectacular.",
+      "goodToKnow": null,
+      "tagLine": "Onsen SPA",
+      "cuisineType": null,
+      "categoryLabel": null,
+      "mustTry": null,
+      "bestTime": null
+    },
+    {
+      "id": "yk-f1",
+      "cityId": "yokohama",
+      "kind": "food",
+      "category": "restaurant",
+      "name": "YGF Malatang",
+      "address": "218-4 Yamashitacho, Naka Ward",
+      "latitude": 35.4432,
+      "longitude": 139.6498,
+      "distanceFromPortKm": 0.8,
+      "rankOrder": 1,
+      "website": null,
+      "manuelQuote": "El Malatang es una de esas experiencias que no esperas encontrar en Japón — sopa de Sichuan con pimienta y guindilla, más carnes, verduras y fideos. Pide el nivel 2 de picante si no estás seguro del todo.",
+      "reservation": null,
+      "whatItIs": null,
+      "whyItMatters": null,
+      "goodToKnow": null,
+      "tagLine": null,
+      "cuisineType": "Cocina de Sichuan (China)",
+      "categoryLabel": "Restaurante",
+      "mustTry": "Malatang nivel 2 de picante con fideos y ternera",
+      "bestTime": "Almuerzo (12:00–14:00)"
+    },
+    {
+      "id": "yk-f2",
+      "cityId": "yokohama",
+      "kind": "food",
+      "category": "restaurant",
+      "name": "Maguro Tomya Megumi",
+      "address": "World Porters, 2-2-1 Shinko, Naka Ward",
+      "latitude": 35.4565,
+      "longitude": 139.6352,
+      "distanceFromPortKm": 1.2,
+      "rankOrder": 2,
+      "website": null,
+      "manuelQuote": "Sushi japonés de verdad — sin la trampa del menú en inglés para turistas. Los pescados son frescos del mercado y el itamae (maestro del sushi) trabaja frente a ti. Pide omakase si el presupuesto lo permite.",
+      "reservation": "Recomendada en fin de semana. Reserva en el mostrador al llegar.",
+      "whatItIs": null,
+      "whyItMatters": null,
+      "goodToKnow": null,
+      "tagLine": null,
+      "cuisineType": "Sushi japonés",
+      "categoryLabel": "Restaurante",
+      "mustTry": "Omakase del chef o el set de tuna (atún) fresco",
+      "bestTime": "Almuerzo (11:30–14:00)"
+    }
+  ],
+  "itineraries": [
+    {
+      "id": "yk-it1",
+      "cityId": "yokohama",
+      "theme": "waterfront_classic",
+      "timeOfDay": "day",
+      "title": "El Frente Marítimo de Yokohama",
+      "catchyPhrase": "Del barco al skyline futurista, sin estrés y a pie",
+      "bestFor": "Primera visita · cruceristas con 4–5 horas en puerto",
+      "durationMinHrs": 3.5,
+      "durationMaxHrs": 5,
+      "totalWalkKm": 3.2,
+      "totalTransitKm": null,
+      "flexNote": "Si tienes más tiempo, añade una parada en Manyo Club para el baño de pies en la azotea antes de volver al barco.",
+      "isRecommended": true,
+      "isPremium": false,
+      "isLocked": false,
+      "rankOrder": 1,
+      "steps": [
+        {
+          "id": "yk-it1-s1",
+          "itineraryId": "yk-it1",
+          "rankOrder": 1,
+          "spotId": "yk-s1",
+          "spot": {
+            "id": "yk-s1",
+            "cityId": "yokohama",
+            "kind": "attraction",
+            "category": null,
+            "name": "Minato Mirai 21 (MM21)",
+            "address": null,
+            "latitude": 35.4567,
+            "longitude": 139.633,
+            "distanceFromPortKm": 1.2,
+            "rankOrder": 1,
+            "website": null,
+            "manuelQuote": "Literalmente a distancia a pie del barco (20 minutos). Para en World Porters — encontrarás de todo, incluyendo el increíble restaurante de sushi Maguro Tomya Megumi, sushi japonés de verdad.",
+            "reservation": null,
+            "whatItIs": "Concebido en los años 80 como un gran proyecto de regeneración urbana que transformó el frente marítimo industrial y los astilleros de Yokohama en un moderno centro futurista.",
+            "whyItMatters": "Es tu puerta de salida del barco a todo lo que está cerca: compras, arte y gastronomía, el museo Nippon Maru, el Cup Noodles Museum, el parque de atracciones Cosmo World, el mirador Landmark Tower Sky Garden y el centro comercial Landmark Plaza — todo conectado y a pie.",
+            "goodToKnow": null,
+            "tagLine": "Distrito costero futurista",
+            "cuisineType": null,
+            "categoryLabel": null,
+            "mustTry": null,
+            "bestTime": null
+          },
+          "title": null,
+          "address": null,
+          "description": "Empieza aquí: el frente marítimo de Minato Mirai es el corazón moderno de Yokohama. Explora el centro comercial Landmark Plaza y sube al Sky Garden si quieres las mejores vistas de la ciudad.",
+          "bonVivantNotes": "La noria Cosmo World es emblemática — si viajas con niños, parada obligatoria. El Cup Noodles Museum tiene un taller donde diseñas tu propio ramen en vaso.",
+          "mustTry": null,
+          "reservation": null,
+          "website": null,
+          "distanceFromPrevKm": null,
+          "travelMode": null,
+          "timeOnSiteMin": 90,
+          "timeOnSiteMax": 120
+        },
+        {
+          "id": "yk-it1-s2",
+          "itineraryId": "yk-it1",
+          "rankOrder": 2,
+          "spotId": "yk-s2",
+          "spot": {
+            "id": "yk-s2",
+            "cityId": "yokohama",
+            "kind": "attraction",
+            "category": null,
+            "name": "Yokohama Chinatown",
+            "address": null,
+            "latitude": 35.4432,
+            "longitude": 139.6498,
+            "distanceFromPortKm": 0.8,
+            "rankOrder": 2,
+            "website": null,
+            "manuelQuote": "En el barrio prueba el restaurante YGF Malatang (218-4 Yamashitacho Naka Ward). El Malatang es comida callejera de Sichuan (tipo Ramen) con pimienta de Sichuan y guindilla seca, más carnes, verduras y fideos.",
+            "reservation": null,
+            "whatItIs": "El primer y más grande barrio chino de Japón.",
+            "whyItMatters": "Uno de los barrios chinos más grandes del mundo, con cientos de restaurantes, tiendas y templos en calles vibrantes.",
+            "goodToKnow": null,
+            "tagLine": "El primer y mayor barrio chino de Japón",
+            "cuisineType": null,
+            "categoryLabel": null,
+            "mustTry": null,
+            "bestTime": null
+          },
+          "title": null,
+          "address": null,
+          "description": "Dirección al barrio chino a pie desde MM21 (unos 20 minutos caminando por el frente marítimo, pasando por Yamashita Park). Come algo en el barrio — hay cientos de opciones.",
+          "bonVivantNotes": "Yamashita Park, de camino, merece una pausa de 10 minutos. Las vistas del puerto desde aquí son excelentes y te das cuenta de lo cerca que está todo.",
+          "mustTry": "Malatang en YGF (218-4 Yamashitacho) — comida callejera de Sichuan, picante y barata.",
+          "reservation": null,
+          "website": null,
+          "distanceFromPrevKm": 2.1,
+          "travelMode": "walk",
+          "timeOnSiteMin": 60,
+          "timeOnSiteMax": 90
+        },
+        {
+          "id": "yk-it1-s3",
+          "itineraryId": "yk-it1",
+          "rankOrder": 3,
+          "spotId": null,
+          "spot": null,
+          "title": "Vuelta al barco",
+          "address": "Osanbashi Yokohama International Passenger Terminal",
+          "description": "Desde el barrio chino, el muelle Osanbashi está a solo 10 minutos a pie. Perfecto para no correr.",
+          "bonVivantNotes": "Si tienes tiempo, sube a la terraza del terminal — las vistas de la bahía desde arriba son gratuitas y espectaculares.",
+          "mustTry": null,
+          "reservation": null,
+          "website": null,
+          "distanceFromPrevKm": 0.9,
+          "travelMode": "walk",
+          "timeOnSiteMin": 10,
+          "timeOnSiteMax": null
+        }
+      ]
+    }
+  ],
+  "tips": [
+    {
+      "id": "yk-tip1",
+      "cityId": "yokohama",
+      "title": "Google Translate modo cámara",
+      "body": "Antes de bajar del barco, descarga el paquete de idioma japonés para Google Translate (funciona sin conexión). El modo cámara convierte al instante cualquier texto en japonés — menús, carteles, instrucciones de cajero. Es la herramienta más útil que puedes llevar en el bolsillo.",
+      "rankOrder": 1
+    },
+    {
+      "id": "yk-tip2",
+      "cityId": "yokohama",
+      "title": "El ritual del efectivo en Japón",
+      "body": "Saca efectivo en el cajero del 7-Eleven o Family Mart nada más llegar — aceptan tarjetas internacionales con fiabilidad. Muchos restaurantes pequeños y tiendas del barrio chino solo aceptan yenes. En Japón presentar el billete y recoger el cambio en la bandejita de la caja es una norma no escrita: no lo saltes.",
+      "rankOrder": 2
+    }
+  ],
+  "warnings": [
+    {
+      "id": "yk-w1",
+      "text": "Taxis en la puerta del terminal: algunos conductores proponen viajes cortos a precios fijos muy por encima del taxímetro. Minato Mirai está a 15 minutos a pie — no necesitas taxi para eso. Si lo usas, insiste en el taxímetro siempre."
+    }
+  ],
+  "images": [
+    {
+      "id": "yk-img1",
+      "cityId": "yokohama",
+      "spotId": null,
+      "slot": "cover",
+      "storagePath": "cities/yokohama/cover.jpg",
+      "altText": "Skyline nocturno de Yokohama con la Landmark Tower y la noria Cosmo World reflejados en la bahía"
+    },
+    {
+      "id": "yk-img2",
+      "cityId": "yokohama",
+      "spotId": null,
+      "slot": "overview_1",
+      "storagePath": "cities/yokohama/overview_1.jpg",
+      "altText": "Paseo marítimo de Yokohama con veleros y el puente de la bahía al fondo"
+    },
+    {
+      "id": "yk-img3",
+      "cityId": "yokohama",
+      "spotId": null,
+      "slot": "overview_2",
+      "storagePath": "cities/yokohama/overview_2.jpg",
+      "altText": "Calle del barrio chino de Yokohama con faroles rojos y la puerta decorada"
+    },
+    {
+      "id": "yk-img4",
+      "cityId": "yokohama",
+      "spotId": "yk-s3",
+      "slot": "spot",
+      "storagePath": "cities/yokohama/spots/manyo_club.jpg",
+      "altText": "Terraza exterior del Manyo Club con vistas al puerto y la noria de Cosmo World"
+    }
+  ]
+}
