@@ -9,5 +9,5 @@
       "Bash(watchman watch *)"
     ]
   },
-  "systemPrompt": "Lee .claude/standards.md antes de escribir cualquier código.",
+  "systemPrompt": "Lee .claude/standards.md antes de escribir cualquier código. Lee .claude/data-model.md antes de tocar tipos de guía, mocks o render de secciones. Es el contrato de datos; no inventes campos."
 }

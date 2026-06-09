@@ -45,6 +45,7 @@ el repo backend (ver `../../CLAUDE.md`).
 - Maneja `loading` y `error` en CADA operación async.
 - Nunca mutar Zustand state directo → siempre vía actions.
 - Todo `useEffect` con listeners/suscripciones retorna su cleanup.
+- Los componentes nunca reciben `LocalizedText` crudo — solo strings ya resueltos (ver `.claude/data-model.md`).
 
 ---
 
@@ -54,7 +55,8 @@ el repo backend (ver `../../CLAUDE.md`).
 - Cero llamadas directas a Supabase desde screens → siempre vía `services/supabase.ts`.
 - Cero llamadas a API desde componentes → vía stores o `services/api/`.
 - Reutiliza componentes — nunca dupliques UI.
-- i18n desde el día uno: los 3 idiomas (es/en/fr) se añaden siempre juntos.
+- i18n del chrome de UI: las 3 claves (es/en/fr) en `constants/i18n/` se añaden siempre juntas.
+- i18n del contenido de guías: `es` es canónico; `en`/`fr` son opcionales (fallback a `es`). Ver `.claude/data-model.md`.
 - Config por entorno en `.env` (`EXPO_PUBLIC_*`) — nunca en código.
 
 ---
